@@ -1,0 +1,101 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+function CreateSubject() {
+    const navigate = useNavigate();
+    const [show, setShow] = useState(false)
+    const [addSubject, setAddSubject] = useState("");
+    const [listSubject, setListSubject] = useState([]);
+
+    useEffect(() => {
+        const subjectList = localStorage.getItem("subjects");
+        if (subjectList !== "null" && subjectList?.length > 0) {
+            setListSubject(JSON.parse(subjectList))
+        }
+    }, []);
+
+    const showAndAddSubject = () => {
+        setShow(!show)
+        if (show && addSubject !== "") {
+            let getSubList = [...listSubject]
+
+            const sub = {
+                id: getSubList.length + 1,
+                subject: addSubject,
+            }
+            getSubList.push(sub)
+            setListSubject(getSubList)
+            localStorage.setItem("subjects", JSON.stringify(getSubList))
+            setAddSubject("")
+        }
+    }
+
+    const handleBack = () => {
+        const user = JSON.parse(localStorage.getItem("user")) || [];
+
+        if (user.role === "teacher") {
+            navigate("/");
+        } else if (user.role === "student") {
+            navigate("/selectSubject");
+        }
+    }
+
+    const handleDelete = (id) => {
+        const confirmDelete = confirm("Are you sure you want to delete?");
+        if (confirmDelete) {
+            const updatedList = listSubject.filter(subject => subject.id !== id);
+            setListSubject(updatedList);
+            console.log(updatedList);
+            localStorage.setItem("subjects", JSON.stringify(updatedList));
+
+            localStorage.removeItem(`exam_${id}`);
+        }
+    };
+
+    return (
+        <>
+            <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button> <br /> <br />
+
+            {show && <input placeholder="Enter Subject" value={addSubject} onChange={(e) => setAddSubject(e.target.value)} />}
+            <br /> <br />
+            <table border="1">
+                <thead>
+                    <tr style={{ color: "pink" }}>
+                        <td>
+                            ID
+                        </td>
+                        <td>Subject</td>
+                        <td colSpan="2" style={{ textAlign: "center" }}>Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        listSubject.length ?
+                            listSubject?.map(({ id, subject }, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{id}</td>
+                                        <td>{subject}</td>
+                                        <td onClick={() => navigate(`/create-exam/${id}`)} style={{ cursor: "pointer", color: "yellow" }}>
+                                            Create Exam
+                                        </td>
+                                        <td onClick={handleDelete} style={{ cursor: "pointer", color: "red" }}>
+                                            Delete Exam
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                            : null
+                    }
+                </tbody>
+            </table>
+
+            <br />
+
+            <button onClick={handleBack}>Back</button> {" "}
+        </>
+
+    )
+}
+
+export default CreateSubject;

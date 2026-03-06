@@ -1,0 +1,50 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  /* text-align: center; */
+}
+
+.preview {
+  border-radius: 10px;
+  border: 2px solid pink;
+  width: 150%;
+  box-shadow: 2px 2px 8px 8px pink;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-back {
+  margin-top: 30px;
+  border: 2px solid rgb(255, 216, 223);
+}
+
+.preview-back:hover {
+  background-color: pink;
+  color: black;
+}
+
+li::before {
+  content: "▶";
+  color: white;
+  margin-right: 10px;
+}
+
+li.correct {
+  color: green;
+}
+
+li.correct::before {
+  color: green;
+}
+
+.select-role {
+  text-align: center;
+}
+
+.create-exam {
+  padding: 10px 10px;
+  text-align: center;
+}
