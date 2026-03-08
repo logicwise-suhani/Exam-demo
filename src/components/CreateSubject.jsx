@@ -54,45 +54,48 @@ function CreateSubject() {
 
     return (
         <>
-            <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button> <br /> <br />
+            <div className="create-subject">
+                <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button> <br /> <br />
 
-            {show && <input placeholder="Enter Subject" value={addSubject} onChange={(e) => setAddSubject(e.target.value)} />}
-            <br /> <br />
-            <table border="1">
-                <thead>
-                    <tr style={{ color: "pink" }}>
-                        <td>
-                            ID
-                        </td>
-                        <td>Subject</td>
-                        <td colSpan="2" style={{ textAlign: "center" }}>Action</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        listSubject.length ?
-                            listSubject?.map(({ id, subject }, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{id}</td>
-                                        <td>{subject}</td>
-                                        <td onClick={() => navigate(`/create-exam/${id}`)} style={{ cursor: "pointer", color: "yellow" }}>
-                                            Create Exam
-                                        </td>
-                                        <td onClick={handleDelete} style={{ cursor: "pointer", color: "red" }}>
-                                            Delete Exam
-                                        </td>
-                                    </tr>
-                                )
-                            })
-                            : null
-                    }
-                </tbody>
-            </table>
+                {show && <input placeholder="Enter Subject" value={addSubject} onChange={(e) => setAddSubject(e.target.value)} />}
+                <br /> <br />
+                <table border="1">
+                    <thead>
+                        <tr style={{ color: "pink" }}>
+                            <td>
+                                ID
+                            </td>
+                            <td>Subject</td>
+                            <td colSpan="2" style={{ textAlign: "center" }}>Action</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            listSubject.length ?
+                                listSubject?.map(({ id, subject }, index) => {
+                                    return (
+                                        <tr key={index}>
+                                            <td>{id}</td>
+                                            <td>{subject}</td>
+                                            <td onClick={() => navigate(`/create-exam/${id}`)} style={{ cursor: "pointer", color: "yellow" }}>
+                                                Create Exam
+                                            </td>
+                                            <td onClick={handleDelete} style={{ cursor: "pointer", color: "red" }}>
+                                                Delete Exam
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                                : null
+                        }
+                    </tbody>
+                </table>
 
-            <br />
+                <br />
 
-            <button onClick={handleBack}>Back</button> {" "}
+            </div>
+                <button onClick={handleBack}>Back</button> {" "}
+
         </>
 
     )

@@ -50,8 +50,8 @@ function App() {
 
         <Route path="/create-exam/:subjectId" element={
           <PrivateRoute allowedRoles={["teacher"]}>
-            <button onClick={handleLogOut} className="logout">LogOut</button>
             <CreateExam />
+            <button onClick={handleLogOut} className="logout">LogOut</button>
           </PrivateRoute>} />
 
         <Route path="/preview/:subjectId" element={<Preview />} />

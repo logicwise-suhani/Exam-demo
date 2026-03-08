@@ -13,7 +13,6 @@ function TeachLogin() {
   const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
 
-  // fix email and pass
   const teacherEmail = "teacher@teach.com";
   const teacherPassword = "Te111111";
 
@@ -81,42 +80,45 @@ function TeachLogin() {
     <>
       <h2>Teacher Login</h2>
 
-      <input
-        placeholder="Enter email"
-        name="email"
-        value={data.email}
-        onChange={handleChange}
-        onBlur={handleBlur}
-      />
-      <span>{touched.email && errors.email}</span>
+      <div className="teach-login">
+        <input
+          placeholder="Enter email"
+          name="email"
+          value={data.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        /> {" "}
+        <span>{touched.email && errors.email}</span>
 
-      <br /> <br />
+        <br /> <br />
 
-      <input
-        type="password"
-        placeholder="Enter password"
-        name="password"
-        value={data.password}
-        onChange={handleChange}
-        onBlur={handleBlur}
-      />
-      <span>{touched.password && errors.password}</span>
+        <input
+          type="password"
+          placeholder="Enter password"
+          name="password"
+          value={data.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
+        <span>{touched.password && errors.password}</span>
 
-      <br />
+        <br />
 
-      {loginError && (
-        <p style={{ color: "red" }}>{loginError}</p>
-      )}
+        {loginError && (
+          <p style={{ color: "red" }}>{loginError}</p>
+        )}
 
-      <br />
-      <button onClick={() => navigate("/")}>Back</button> {" "}
+        <br />
+        <button onClick={() => navigate("/")}>Back</button> {" "}
 
-      <button onClick={handleLogin} disabled={!isTeachValid}>
-        Login
-      </button> {" "}
+        <button onClick={handleLogin} disabled={!isTeachValid}>
+          Login
+        </button> {" "}
 
-      <p>Already logged in? <span onClick={alreadyLogged} style={{ color: "red", cursor: "pointer" }}>Click here</span> </p>
+        <p>Already logged in? <span onClick={alreadyLogged} style={{ color: "red", cursor: "pointer" }}>Click here</span> </p>
+      </div>
     </>
+
   );
 }
 

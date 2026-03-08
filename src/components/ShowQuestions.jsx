@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
-import {
-    Button,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    DialogActions
-} from "@mui/material";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
@@ -81,36 +73,6 @@ function ShowQuestions() {
 
     return (
         <>
-
-            <div style={{ padding: "20px" }}>
-                <Button variant="contained" color="primary" onClick={handleClickOpen}>
-                    Open Dialog
-                </Button>
-
-                <Dialog
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
-                >
-                    <DialogTitle id="alert-dialog-title">{"Confirm Action"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to proceed with this action?
-                            This cannot be undone.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="secondary">
-                            Cancel
-                        </Button>
-                        <Button onClick={handleClose} color="primary" autoFocus>
-                            Confirm
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
-
             <h2>{`Subject ID is : ${subjectId}`}</h2>
 
             {displayQuestions.length === 0 && (

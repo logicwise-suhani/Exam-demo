@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
-import { data, useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const CreateExam = () => {
     const { subjectId } = useParams();
@@ -12,6 +12,24 @@ const CreateExam = () => {
     const [timeSpent, setTimeSpent] = useState("");
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.examData) {
+            const data = location.state.examData;
+            setQuestions(data);
+
+            if (data.length > 0) {
+                const last = data[data.length - 1];
+
+                setQuesNumber(data.length);
+                setQues(last.question);
+                setOptions(last.options);
+                setCorrectOption(last.correctAnswer);
+                setTimeSpent(last.timeTaken);
+            }
+        }
+    }, [location.state]);
 
     useEffect(() => {
         const savedData = localStorage.getItem(`exam_${subjectId}`);
@@ -27,9 +45,9 @@ const CreateExam = () => {
         validate("question", value);
     };
 
-    const handleOptionsChange = (index, values) => {
+    const handleOptionsChange = (index, value) => {
         const updatedOptions = [...options]
-        updatedOptions[index] = values;
+        updatedOptions[index] = value;
         setOptions(updatedOptions);
     }
 
@@ -78,7 +96,7 @@ const CreateExam = () => {
 
             if (!isValid) return;
 
-            if (quesNumber >= 15) {
+            if (quesNumber === 15) {
                 alert("End of question creation")
                 return;
             }
@@ -90,9 +108,15 @@ const CreateExam = () => {
                 timeTaken: Number(timeSpent) || 0
             };
 
-            // const data = [...questions, newQuestion];
+            const updatedQuestions = [...questions];
 
-            setQuestions([...questions, newQuestion]);
+            if (updatedQuestions[quesNumber - 1]) {
+                updatedQuestions[quesNumber - 1] = newQuestion;
+            } else {
+                updatedQuestions.push(newQuestion);
+            }
+
+            setQuestions(updatedQuestions);
             setQuesNumber(prev => prev + 1);
 
             setQues("");
@@ -111,10 +135,6 @@ const CreateExam = () => {
             return;
         }
 
-        // const data ={
-        //     question: 
-        // }
-
         const prevIndex = quesNumber - 2;
         const prevQuestion = questions[prevIndex];
 
@@ -130,14 +150,7 @@ const CreateExam = () => {
 
     const previewQuestions = () => {
 
-        const lastQuestion = {
-            question: ques,
-            options: options,
-            correctAnswer: correctOption,
-            timeTaken: Number(timeSpent) || 0
-        };
-
-        const finalQuestions = [...questions, lastQuestion];
+        const finalQuestions = questions;
         navigate(`/preview/${subjectId}`, {
             state: { examData: finalQuestions }
         });
@@ -148,21 +161,8 @@ const CreateExam = () => {
         <>
             <div className='create-exam'>
                 <h2>CreateExam: {`${subjectId}`}</h2>
-
-                Time Required (in secs): {" "}
-                <input
-                    style={{ width: "40px", border: "2px solid white", borderRadius: "5px" }}
-                    type='number'
-                    min="0"
-                    value={timeSpent}
-                    onChange={(e) => setTimeSpent(e.target.value)}
-                    onBlur={(e) => validate("timeSpent", e.target.value)}
-                />
-                {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
-
-
-                <br /> <br />
-                <label style={{ fontSize: "20px", marginRight: "80px" }}>Ques no: {quesNumber} </label> <br />
+                <br />
+                <label style={{ fontSize: "20px" }}>Ques no: {quesNumber} </label> <br />
                 <textarea
                     value={ques}
                     onChange={handleQuestionChange}
@@ -172,9 +172,8 @@ const CreateExam = () => {
                 {errors.question && <p style={{ color: "red" }}>{errors.question}</p>}
 
                 <h3>Options</h3>
-
                 {options.map((opt, index) => (
-                    <div key={index}>
+                    <div key={index} className='radio-btn'>
                         <input
                             type='radio'
                             name='group'
@@ -185,37 +184,52 @@ const CreateExam = () => {
                                 validate("correctOption", index);
                             }}
                         />
+                        {show ? (
+                            <input
+                                type="text"
+                                value={opt}
+                                placeholder={`Type Option ${index + 1}`}
+                                onChange={(e) => handleOptionsChange(index, e.target.value)}
+                                onBlur={(e) => {
+                                    validateOption(index, e.target.value);
 
-                        {opt}
+                                    const updatedOptions = [...options];
+                                    updatedOptions[index] = e.target.value;
 
-                        {show && < input
-                            type="text"
-                            value={opt}
-                            placeholder={`Type Option ${index + 1}`}
-                            onChange={(e) =>
-                                handleOptionsChange(index, e.target.value)
-                            }
-                            onBlur={(e) => {
-                                validateOption(index, e.target.value)
-                                if (!opt.trim()) {
-                                    setShow(!show)
-                                }
-                            }}
-                        />}
+                                    if (updatedOptions.every(o => o.trim() !== "")) {
+                                        setShow(false);
+                                    }
+                                }}
+                            />
+                        ) : (
+                            <span>{opt}</span>
+                        )}
 
                         {errors[`option${index}`] && (
                             < p style={{ color: "red" }}>
                                 {errors[`option${index}`]}
                             </p>
                         )}
-
                     </div>
                 ))}
                 {errors.correctOption && <p style={{ color: "red" }}>{errors.correctOption}</p>}
-                <br />
+                < br />
+
+                Time Required (in secs): {" "}
+                <input
+                    style={{ width: "40px" }}
+                    type='number'
+                    min="0"
+                    value={timeSpent}
+                    onChange={(e) => setTimeSpent(e.target.value)}
+                    onBlur={(e) => validate("timeSpent", e.target.value)}
+                />
+                {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
+
+                <br /> <br />
                 <button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Edit Options'}</button> {" "}
-                <button onClick={handleBack}>Back</button> {" "}
-                <button onClick={nextQuestion} disabled={!isValid}>Next</button> {" "}
+                < button onClick={handleBack} > Back</button> {" "}
+                <button onClick={nextQuestion} disabled={!isValid || quesNumber === 15}>Next</button> {" "}
                 {quesNumber >= 15 && <button onClick={previewQuestions}>Preview</button>}
 
             </div >
