@@ -11,6 +11,7 @@ const CreateExam = () => {
     const [correctOption, setCorrectOption] = useState(null);
     const [timeSpent, setTimeSpent] = useState("");
     const [errors, setErrors] = useState({});
+    const [subjectName, setSubjectName] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -36,6 +37,16 @@ const CreateExam = () => {
         if (savedData) {
             const parsed = JSON.parse(savedData);
             setQuestions(parsed);
+        }
+
+        const subjects = JSON.parse(localStorage.getItem("subjects")) || [];
+
+        const foundSubject = subjects.find(
+            (sub) => String(sub.id) === String(subjectId)
+        );
+
+        if (foundSubject) {
+            setSubjectName(foundSubject.subject);
         }
     }, [subjectId]);
 
@@ -96,11 +107,6 @@ const CreateExam = () => {
 
             if (!isValid) return;
 
-            if (quesNumber === 15) {
-                alert("End of question creation")
-                return;
-            }
-
             const newQuestion = {
                 question: ques,
                 options: options,
@@ -117,6 +123,12 @@ const CreateExam = () => {
             }
 
             setQuestions(updatedQuestions);
+
+            if (quesNumber === 15) {
+                alert("Saved!")
+                return;
+            }
+
             setQuesNumber(prev => prev + 1);
 
             setQues("");
@@ -151,6 +163,7 @@ const CreateExam = () => {
     const previewQuestions = () => {
 
         const finalQuestions = questions;
+
         navigate(`/preview/${subjectId}`, {
             state: { examData: finalQuestions }
         });
@@ -160,7 +173,7 @@ const CreateExam = () => {
     return (
         <>
             <div className='create-exam'>
-                <h2>CreateExam: {`${subjectId}`}</h2>
+                <h2>SUBJECT: {`${subjectName}`}</h2>
                 <br />
                 <label style={{ fontSize: "20px" }}>Ques no: {quesNumber} </label> <br />
                 <textarea
@@ -176,7 +189,6 @@ const CreateExam = () => {
                     <div key={index} className='radio-btn'>
                         <input
                             type='radio'
-                            name='group'
                             value={index}
                             checked={correctOption === index}
                             onChange={() => {
@@ -215,7 +227,7 @@ const CreateExam = () => {
                 {errors.correctOption && <p style={{ color: "red" }}>{errors.correctOption}</p>}
                 < br />
 
-                Time Required (in secs): {" "}
+                Time Required: {" "}
                 <input
                     style={{ width: "40px" }}
                     type='number'
@@ -223,13 +235,13 @@ const CreateExam = () => {
                     value={timeSpent}
                     onChange={(e) => setTimeSpent(e.target.value)}
                     onBlur={(e) => validate("timeSpent", e.target.value)}
-                />
+                /> secs
                 {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
 
                 <br /> <br />
                 <button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Edit Options'}</button> {" "}
-                < button onClick={handleBack} > Back</button> {" "}
-                <button onClick={nextQuestion} disabled={!isValid || quesNumber === 15}>Next</button> {" "}
+                <button onClick={handleBack} > Back</button> {" "}
+                <button onClick={nextQuestion} disabled={!isValid}> Next</button> {" "}
                 {quesNumber >= 15 && <button onClick={previewQuestions}>Preview</button>}
 
             </div >

@@ -35,11 +35,15 @@ function Preview() {
         alert("Exam Saved Successfully!");
     }
 
+    // const handleEdit = () => {
+    //     navigate(`/create-exam/${subjectId}`, {
+    //         state: { examData: previewData }
+    //     });
+    // };
+
     const handleEdit = () => {
-        navigate(`/createExam/${subjectId}`, {
-            state: { examData: previewData }
-        });
-    };
+        navigate(`/edit-test/${subjectId}`)
+    }
 
     return (
         <>

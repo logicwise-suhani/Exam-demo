@@ -14,18 +14,26 @@ function CreateSubject() {
         }
     }, []);
 
+    const updateIDs = (list) => {
+        return list.map((item, index) => ({
+            ...item,
+            id: index + 1
+        }))
+    }
+
     const showAndAddSubject = () => {
-        setShow(!show)
-        if (show && addSubject !== "") {
+        setShow((prev) => !prev)
+        if (show && addSubject.trim() !== "") {
             let getSubList = [...listSubject]
 
             const sub = {
                 id: getSubList.length + 1,
-                subject: addSubject,
+                subject: addSubject.trim()
             }
             getSubList.push(sub)
-            setListSubject(getSubList)
-            localStorage.setItem("subjects", JSON.stringify(getSubList))
+            const updatedList = updateIDs(getSubList);
+            setListSubject(updatedList)
+            localStorage.setItem("subjects", JSON.stringify(updatedList))
             setAddSubject("")
         }
     }
@@ -44,11 +52,11 @@ function CreateSubject() {
         const confirmDelete = confirm("Are you sure you want to delete?");
         if (confirmDelete) {
             const updatedList = listSubject.filter(subject => subject.id !== id);
-            setListSubject(updatedList);
-            console.log(updatedList);
-            localStorage.setItem("subjects", JSON.stringify(updatedList));
-
+            const reassign = updateIDs(updatedList);
+            setListSubject(reassign);
+            localStorage.setItem("subjects", JSON.stringify(reassign));
             localStorage.removeItem(`exam_${id}`);
+
         }
     };
 
@@ -61,7 +69,7 @@ function CreateSubject() {
                 <br /> <br />
                 <table border="1">
                     <thead>
-                        <tr style={{ color: "pink" }}>
+                        <tr>
                             <td>
                                 ID
                             </td>
@@ -80,7 +88,7 @@ function CreateSubject() {
                                             <td onClick={() => navigate(`/create-exam/${id}`)} style={{ cursor: "pointer", color: "yellow" }}>
                                                 Create Exam
                                             </td>
-                                            <td onClick={handleDelete} style={{ cursor: "pointer", color: "red" }}>
+                                            <td onClick={() => handleDelete(id)} style={{ cursor: "pointer", color: "red" }}>
                                                 Delete Exam
                                             </td>
                                         </tr>
@@ -94,7 +102,7 @@ function CreateSubject() {
                 <br />
 
             </div>
-                <button onClick={handleBack}>Back</button> {" "}
+            <button onClick={handleBack}>Back</button> {" "}
 
         </>
 

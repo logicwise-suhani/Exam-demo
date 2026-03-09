@@ -13,7 +13,7 @@ function TeachLogin() {
   const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
 
-  const teacherEmail = "teacher@teach.com";
+  const teacherEmail = "teacher@teach.com"; 
   const teacherPassword = "Te111111";
 
   const teachValidate = (values) => {
