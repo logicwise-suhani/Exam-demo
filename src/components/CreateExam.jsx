@@ -218,6 +218,7 @@ const CreateExam = () => {
                     onBlur={(e) => validate("question", e.target.value)}
                 />
                 {errors.question && <p style={{ color: "red" }}>{errors.question}</p>}
+
                 <h3>Options</h3>
                 {options.map((opt, index) => (
                     <div key={index} className='radio-btn'>

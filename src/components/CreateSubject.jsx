@@ -7,6 +7,7 @@ function CreateSubject() {
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
 
+
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
         if (subjectList !== "null" && subjectList?.length > 0) {
@@ -60,6 +61,20 @@ function CreateSubject() {
         }
     };
 
+    const handleData = (id) => {
+
+        const storedData = localStorage.getItem(`exam_${id}`);
+        if (storedData) {
+            const parsedData = JSON.parse(storedData);
+
+            navigate(`/preview/${id}`, {
+                state: { examData: parsedData }
+            });
+        } else {
+            alert("No exam data found for this subject");
+        }
+    };
+
     return (
         <>
             <div className="create-subject">
@@ -74,7 +89,7 @@ function CreateSubject() {
                                 ID
                             </td>
                             <td>Subject</td>
-                            <td colSpan="2" style={{ textAlign: "center" }}>Action</td>
+                            <td colSpan="3" style={{ textAlign: "center" }}>Action</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,6 +106,7 @@ function CreateSubject() {
                                             <td onClick={() => handleDelete(id)} style={{ cursor: "pointer", color: "red" }}>
                                                 Delete Exam
                                             </td>
+                                            <td onClick={() => handleData(id)} style={{ cursor: "pointer", color: localStorage.getItem(`exam_${id}`) ? "yellowgreen" : "red" }}>Preview Data</td>
                                         </tr>
                                     )
                                 })

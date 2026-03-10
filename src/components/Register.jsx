@@ -42,9 +42,9 @@ function Register() {
     const handleRegister = () => {
         const users = JSON.parse(localStorage.getItem("users")) || [];
 
-        const exists = users.find(u => u.email === data.email);
+        const exists = users.find(u => u.email === data.email || u.password === data.password);
         if (exists) {
-            alert("Email already registered");
+            alert("User already registered");
             return;
         }
 

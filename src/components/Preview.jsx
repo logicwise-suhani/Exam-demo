@@ -15,7 +15,7 @@ function Preview() {
         if (storedData) {
             setPreviewData(JSON.parse(storedData));
         }
-
+        console.log(storedData);
     }, [subjectId]);
 
     useEffect(() => {
@@ -60,7 +60,7 @@ function Preview() {
         <>
             <div className="preview-container">
                 <h2>Preview</h2>
-                <h3>Total Time: {formatTime(totalTime)}</h3>
+                {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)} mins</h3>}
                 <div className={previewData.length === 0 ? "" : "preview"}>
                     {previewData.map((item, index) => (
                         <div key={index}>

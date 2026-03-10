@@ -68,13 +68,13 @@ function Login() {
     }
   };
 
-  const alreadyLogged = () => {
-    const logged = localStorage.getItem("user");
+  // const alreadyLogged = () => {
+  //   const logged = localStorage.getItem("user");
 
-    if (logged) {
-      navigate("/selectSubject");
-    }
-  }
+  //   if (logged) {
+  //     navigate("/selectSubject");
+  //   }
+  // }
 
   const isValid =
     Object.keys(errors).length === 0 &&
@@ -113,8 +113,6 @@ function Login() {
       <button onClick={handleLogin} disabled={!isValid}>
         Login
       </button> {" "}
-
-      <button onClick={alreadyLogged}>Go</button>
 
       <p onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>New student? {" "} Register here</p>
     </div>
