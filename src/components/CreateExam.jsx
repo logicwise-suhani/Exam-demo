@@ -125,16 +125,29 @@ const CreateExam = () => {
             setQuestions(updatedQuestions);
 
             if (quesNumber === 15) {
-                alert("Saved!")
+                alert("End of Question creation")
                 return;
             }
 
+            const nextIndex = quesNumber;
+
             setQuesNumber(prev => prev + 1);
 
-            setQues("");
-            setOptions(["", "", "", ""]);
-            setCorrectOption(null);
-            setTimeSpent("");
+            if (updatedQuestions[nextIndex]) {
+                const nextQues = updatedQuestions[nextIndex];
+
+                setQues(nextQues.question);
+                setOptions(nextQues.options);
+                setCorrectOption(nextQues.correctAnswer);
+                setTimeSpent(nextQues.timeTaken);
+            }
+
+            else {
+                setQues("");
+                setOptions(["", "", "", ""]);
+                setCorrectOption(null);
+                setTimeSpent("");
+            }
             setErrors({});
 
         }
@@ -162,20 +175,42 @@ const CreateExam = () => {
 
     const previewQuestions = () => {
 
-        const finalQuestions = questions;
+        const lastQuestion = {
+            question: ques,
+            options: options,
+            correctAnswer: correctOption,
+            timeTaken: Number(timeSpent) || 0
+        };
+
+        const updatedQuestions = [...questions];
+
+        if (updatedQuestions[quesNumber - 1]) {
+            updatedQuestions[quesNumber - 1] = lastQuestion;
+        } else {
+            updatedQuestions.push(lastQuestion);
+        }
+
+        setQuestions(updatedQuestions);
 
         navigate(`/preview/${subjectId}`, {
-            state: { examData: finalQuestions }
+            state: { examData: updatedQuestions }
         });
+    };
 
+    const handleKeyDown = (e) => {
+        const invalid = ['e', 'E', '.', '+', '-'];
+
+        if (invalid.includes(e.key)) {
+            e.preventDefault();
+        }
     }
 
     return (
         <>
+            <h2 style={{ textAlign: "center" }}>SUBJECT: {`${subjectName}`}</h2>
+            <br />
             <div className='create-exam'>
-                <h2>SUBJECT: {`${subjectName}`}</h2>
-                <br />
-                <label style={{ fontSize: "20px" }}>Ques no: {quesNumber} </label> <br />
+                <label>Ques no: {quesNumber} </label> <br />
                 <textarea
                     value={ques}
                     onChange={handleQuestionChange}
@@ -183,7 +218,6 @@ const CreateExam = () => {
                     onBlur={(e) => validate("question", e.target.value)}
                 />
                 {errors.question && <p style={{ color: "red" }}>{errors.question}</p>}
-
                 <h3>Options</h3>
                 {options.map((opt, index) => (
                     <div key={index} className='radio-btn'>
@@ -208,9 +242,6 @@ const CreateExam = () => {
                                     const updatedOptions = [...options];
                                     updatedOptions[index] = e.target.value;
 
-                                    if (updatedOptions.every(o => o.trim() !== "")) {
-                                        setShow(false);
-                                    }
                                 }}
                             />
                         ) : (
@@ -226,7 +257,6 @@ const CreateExam = () => {
                 ))}
                 {errors.correctOption && <p style={{ color: "red" }}>{errors.correctOption}</p>}
                 < br />
-
                 Time Required: {" "}
                 <input
                     style={{ width: "40px" }}
@@ -235,18 +265,24 @@ const CreateExam = () => {
                     value={timeSpent}
                     onChange={(e) => setTimeSpent(e.target.value)}
                     onBlur={(e) => validate("timeSpent", e.target.value)}
+                    onKeyDown={handleKeyDown}
                 /> secs
                 {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
-
                 <br /> <br />
-                <button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Edit Options'}</button> {" "}
-                <button onClick={handleBack} > Back</button> {" "}
-                <button onClick={nextQuestion} disabled={!isValid}> Next</button> {" "}
-                {quesNumber >= 15 && <button onClick={previewQuestions}>Preview</button>}
-
             </div >
+            <div className='exam-btn'>
+                <button onClick={handleBack} > Back</button> {" "}
+                <button onClick={nextQuestion} disabled={!isValid}>Next</button> {" "}
+                {quesNumber === 15 && <button onClick={previewQuestions}>Preview</button>}
+            </div>
         </>
     )
 }
 
 export default CreateExam;
+
+// if (updatedOptions.every(o => o.trim() !== "")) {
+//     setShow(false);
+// }
+
+{/* <button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Edit Options'}</button> {" "} */ }

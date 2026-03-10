@@ -8,6 +8,7 @@ function Preview() {
     const navigate = useNavigate();
     const location = useLocation();
 
+
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
 
@@ -29,29 +30,38 @@ function Preview() {
         0
     );
 
-
     const handleSave = () => {
+        if (!previewData || (Array.isArray(previewData) && previewData.length === 0)) {
+            alert("Empty Test can't be submitted!");
+            return;
+        }
+
         localStorage.setItem(`exam_${subjectId}`, JSON.stringify(previewData));
         alert("Exam Saved Successfully!");
-    }
+    };
 
-    // const handleEdit = () => {
-    //     navigate(`/create-exam/${subjectId}`, {
-    //         state: { examData: previewData }
-    //     });
-    // };
 
     const handleEdit = () => {
-        navigate(`/edit-test/${subjectId}`)
+        navigate(`/create-exam/${subjectId}`, {
+            state: { examData: previewData }
+        });
+    };
+
+    const handleDelete = () => {
+        const data = localStorage.getItem(`exam_${subjectId}`, JSON.stringify(previewData));
+        if (data) {
+            localStorage.removeItem(`exam_${subjectId}`);
+        }
+        navigate(`/create-exam/${subjectId}`)
     }
+
 
     return (
         <>
             <div className="preview-container">
                 <h2>Preview</h2>
-                <div className="preview">
-                    <h3>Total Time: {formatTime(totalTime)}</h3>
-
+                <h3>Total Time: {formatTime(totalTime)}</h3>
+                <div className={previewData.length === 0 ? "" : "preview"}>
                     {previewData.map((item, index) => (
                         <div key={index}>
                             <h4>{index + 1}. {item.question} </h4>
@@ -65,10 +75,18 @@ function Preview() {
                         </div>
                     ))}
                 </div >
-
-                <button className="preview-back" onClick={() => navigate(-1)}>Back</button> {" "}
-                <button className="preview-back" onClick={handleSave}>Submit Test</button> {" "}
-                <button className="preview-back" onClick={handleEdit}>Edit Test</button>
+            </div>
+            <div className="preview-buttons">
+                <div className="preview-back">
+                    <button onClick={() => navigate("/createSubject")}>Home</button> {" "}
+                    {previewData.length === 0 ? "" :
+                        <>
+                            <button onClick={handleSave}>Submit Test</button> {" "}
+                            <button onClick={handleEdit}>Edit Test</button> {" "}
+                            <button onClick={handleDelete}>Delete Test</button>
+                        </>
+                    }
+                </div>
             </div>
         </>
     )

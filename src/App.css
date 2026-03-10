@@ -7,7 +7,6 @@
 
 .preview-container h2 {
   text-align: center;
-  width: 150%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -17,22 +16,37 @@
 .preview {
   border-radius: 10px;
   border: 2px solid pink;
-  width: 150%;
-  box-shadow: 2px 2px 8px 8px pink;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: baseline;
+  padding-left: 30px;
+  padding-bottom: 10px;
+}
+
+.preview-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.preview-back {
+.preview-back button {
   margin-top: 30px;
   border: 2px solid rgb(255, 216, 223);
 }
 
-.preview-back:hover {
+.preview-back button:hover {
   background-color: pink;
   color: black;
+}
+
+.preview-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
 li::before {
@@ -56,6 +70,54 @@ li.correct::before {
 .create-exam {
   padding: 10px 10px;
   text-align: center;
+  border: 1px solid white;
+  width: 600px;
+  gap: 80px;
+}
+
+.create-exam label,
+h3 {
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+}
+
+.create-exam input,
+.create-exam textarea {
+  height: 20px;
+  width: 200px;
+  border: 2px solid #ba3f8bb9;
+  border-radius: 7px;
+  background-color: rgb(255, 192, 203, 0.15);
+  padding: 5px;
+}
+
+.create-exam textarea {
+  width: 300px;
+  height: 150px;
+  resize: none;
+}
+
+.exam-btn {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.radio-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.radio-btn input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .create-subject input {

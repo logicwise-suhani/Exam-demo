@@ -17,7 +17,7 @@ function Home() {
   return (
     <>
       <div className="select-role">
-      <h2>Select your Role</h2>
+        <h2>Select your Role</h2>
         <button
           onClick={() =>
             navigate("/teacher-login")

@@ -12,8 +12,6 @@ import { PublicRoute } from "./components/PublicRoute";
 import Preview from "./components/Preview";
 import SelectSubject from "./components/SelectSubject";
 import SavedQuestions from "./components/ShowQuestions";
-import EditTest from "./components/EditTest";
-
 
 function App() {
 
@@ -58,14 +56,12 @@ function App() {
         <Route path="/preview/:subjectId" element={<Preview />} />
         <Route path="/showQues/:subjectId" element={<SavedQuestions />} />
 
-        <Route path="/edit-test/:subjectId" element={<EditTest />} />
-
         <Route
           path="/createSubject"
           element={
             <PrivateRoute allowedRoles={["teacher"]}>
               <CreateSubject />
-              <button onClick={handleLogOut}>LogOut</button>
+              <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
             </PrivateRoute>
           }
         />

@@ -78,7 +78,7 @@ function TeachLogin() {
 
   return (
     <>
-      <h2>Teacher Login</h2>
+      <h2>Login</h2>
 
       <div className="teach-login">
         <input
