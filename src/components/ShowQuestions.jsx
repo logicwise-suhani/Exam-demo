@@ -11,17 +11,6 @@ function ShowQuestions() {
     const [isRunning, setIsRunning] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
 
-    const [open, setOpen] = useState(false);
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
 
@@ -73,8 +62,10 @@ function ShowQuestions() {
 
     return (
         <>
-            <h2>{`Subject ID is : ${subjectId}`}</h2>
-
+            <nav className="navbar">
+                <h2>{`Subject ID is : ${subjectId}`}</h2>
+                {<button onClick={() => setIsRunning(true)} style={{ color: "yellow" }}>Start Timer</button>}
+            </nav>
             {displayQuestions.length === 0 && (
                 <h3 style={{ color: "yellow" }}>
                     Click Generate to start exam
@@ -82,7 +73,6 @@ function ShowQuestions() {
             )}
 
 
-            {<button onClick={() => setIsRunning(true)} style={{ color: "yellow" }}>Start Timer</button>}
 
             {displayQuestions.length > 0 && (
                 <div>

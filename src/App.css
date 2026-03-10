@@ -150,3 +150,62 @@ h3 {
   font-weight: 600;
   font-size: 20px;
 }
+
+.select-subject {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid white;
+  border-radius: 10px;
+  width: 600px;
+  padding: 32px 0px;
+  flex-wrap: wrap;
+}
+
+.select-subject label {
+  border: 1px solid white;
+  padding: 16px 16px;
+  border-radius: 10px;
+  box-shadow: 2px 2px rebeccapurple;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.select-btn {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 30px;
+  gap: 30px;
+  background: linear-gradient(to right, #ef2a6200, #ba3f8bb9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar p {
+  margin: 0;
+  font-weight: 500;
+  color: black;
+  font-size: 20px;
+}
+
+.navbar h2 {
+  margin: 0;
+}
+
+.select-subject {
+  margin-top: 20px;
+}
+
+.select-btn {
+  margin-top: 10px;
+}

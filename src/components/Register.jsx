@@ -42,9 +42,9 @@ function Register() {
     const handleRegister = () => {
         const users = JSON.parse(localStorage.getItem("users")) || [];
 
-        const exists = users.find(u => u.email === data.email || u.password === data.password);
+        const exists = users.find(u => u.email === data.email);
         if (exists) {
-            alert("User already registered");
+            alert("User already registered. Please Login");
             return;
         }
 
@@ -55,7 +55,6 @@ function Register() {
         });
 
         localStorage.setItem("users", JSON.stringify(users));
-
         navigate("/login");
     };
 
@@ -63,6 +62,16 @@ function Register() {
         Object.keys(errors).length === 0 &&
         data.email &&
         data.password;
+
+    const alreadyRegistered = () => {
+        const loggedUser = JSON.parse(localStorage.getItem("user")) || [];
+
+        if (loggedUser) {
+            navigate("/login");
+            console.log("Logged in as: ", loggedUser.email);
+        }
+
+    }
 
     return (
         <div>
@@ -89,11 +98,13 @@ function Register() {
             />
             <span>{touched.password && errors.password}</span>
 
-            <br />
+            <br /> <br />
 
             <button onClick={handleRegister} disabled={!isValid}>
                 Register
             </button>
+            <br /> <br />
+            <p>Already registered? <span onClick={alreadyRegistered} style={{ cursor: "pointer", color: "red" }}>Please Login</span></p>
         </div>
     );
 }

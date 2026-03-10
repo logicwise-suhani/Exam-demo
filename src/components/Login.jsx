@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -12,6 +12,18 @@ function Login() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
+
+  useEffect(() => {
+    const loggedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (loggedUser) {
+      if (loggedUser.role === "teacher") {
+        navigate("/createSubject");
+      } else if (loggedUser.role === "student") {
+        navigate("/selectSubject");
+      }
+    }
+  }, [navigate]);
 
   const validate = (values) => {
     const errors = {};
@@ -57,9 +69,7 @@ function Login() {
       return;
     }
 
-
     localStorage.setItem("user", JSON.stringify(user));
-
 
     if (user.role === "teacher") {
       navigate("/createSubject");
@@ -67,14 +77,6 @@ function Login() {
       navigate("/selectSubject");
     }
   };
-
-  // const alreadyLogged = () => {
-  //   const logged = localStorage.getItem("user");
-
-  //   if (logged) {
-  //     navigate("/selectSubject");
-  //   }
-  // }
 
   const isValid =
     Object.keys(errors).length === 0 &&
