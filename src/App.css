@@ -155,19 +155,21 @@ h3 {
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   gap: 10px;
   border: 1px solid white;
   border-radius: 10px;
   width: 600px;
+  height: 200px;
   padding: 32px 0px;
   flex-wrap: wrap;
 }
 
 .select-subject label {
-  border: 1px solid white;
+  border: 2px solid pink;
   padding: 16px 16px;
   border-radius: 10px;
-  box-shadow: 2px 2px rebeccapurple;
+  /* box-shadow: 2px 2px rebeccapurple; */
   font-size: 20px;
   font-weight: 400;
 }
@@ -185,16 +187,52 @@ h3 {
   width: 100%;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   padding: 15px 30px;
   gap: 30px;
   background: linear-gradient(to right, #ef2a6200, #ba3f8bb9);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.navbar-ques {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: linear-gradient(to right, #ef2a6200, #ba3f8bb9);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.nav-left {
+  flex: 1;
+  text-align: center;
+}
+
+.nav-center {
+  flex: 1;
+  text-align: center;
+}
+
+.nav-right {
+  flex: 1;
+  text-align: center;
+}
+
+.navbar-ques h2,
+.navbar-ques p {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+}
+
 .navbar p {
   margin: 0;
   font-weight: 500;
-  color: black;
+  color: white;
   font-size: 20px;
 }
 
@@ -208,4 +246,40 @@ h3 {
 
 .select-btn {
   margin-top: 10px;
+}
+
+.display-ques {
+  max-width: 700px;
+  margin: 120px auto 0;
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: white;
+}
+
+.display-ques h4 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.display-ques div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.display-ques input[type="radio"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.display-ques label {
+  cursor: pointer;
+  flex: 1;
 }

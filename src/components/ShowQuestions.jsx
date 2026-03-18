@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 
 function ShowQuestions() {
@@ -9,7 +9,13 @@ function ShowQuestions() {
     const [displayQuestions, setDisplayQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
+    const [show, setShow] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
+    const [subjectName, setSubjectName] = useState("");
+    const [userName, setUserName] = useState("");
+    const [answers, setAnswers] = useState({});
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
@@ -19,6 +25,26 @@ function ShowQuestions() {
         }
 
     }, [subjectId]);
+
+    useEffect(() => {
+        const subjects = JSON.parse(localStorage.getItem("subjects")) || [];
+
+        const foundSubject = subjects.find(
+            (sub) => String(sub.id) === String(subjectId)
+        );
+
+        if (foundSubject) {
+            setSubjectName(foundSubject.subject);
+        }
+    }, [subjectId]);
+
+    useEffect(() => {
+        const name = JSON.parse(localStorage.getItem("user")) || [];
+
+        if (name) {
+            setUserName(name.email)
+        }
+    }, []);
 
 
     const generateQuestions = () => {
@@ -30,11 +56,12 @@ function ShowQuestions() {
         const shuffled = [...savedData].sort(() => 0.3 - Math.random());
 
         const randomEight = shuffled.slice(0, 8);
-        console.log(randomEight);
         setDisplayQuestions(randomEight);
         setCurrentIndex(0);
 
         setTimeLeft(randomEight[0].timeTaken);
+        setIsRunning(true);
+        setShow(true);
     };
 
     useEffect(() => {
@@ -53,30 +80,76 @@ function ShowQuestions() {
 
     }, [isRunning, timeLeft]);
 
+    const notValid = Object.keys(answers).length !== displayQuestions.length;
+
     const handleSubmit = () => {
-        const confirmSubmit = confirm("Are you sure want to Submit?");
-        if (confirmSubmit) {
-            console.log("Submitted!");
+
+        if (notValid) {
+            alert("Please answer all questions before submitting!");
+            return;
         }
+
+        const confirmSubmit = confirm("Are you sure want to Submit?");
+        const test = [...savedData];
+        if (confirmSubmit) {
+            localStorage.setItem("test", JSON.stringify(test));
+            console.log("Submitted!", test);
+        }
+
     }
+
+    const handlePrev = () => {
+        if (currentIndex === 0) return;
+
+        const prevIndex = currentIndex - 1;
+        setCurrentIndex(prevIndex);
+
+        const prevQues = displayQuestions[prevIndex];
+        if (prevQues) {
+            setTimeLeft(prevQues.timeTaken);
+        }
+    };
+
+    const handleNext = () => {
+        if (answers[currentIndex] === undefined) {
+            setError("Please choose an option");
+            return;
+        }
+
+        setError("");
+
+        if (currentIndex < displayQuestions.length - 1) {
+            const nextIndex = currentIndex + 1;
+            setCurrentIndex(nextIndex);
+            setTimeLeft(displayQuestions[nextIndex].timeTaken);
+        }
+    };
+
 
     return (
         <>
-            <nav className="navbar">
-                <h2>{`Subject ID is : ${subjectId}`}</h2>
-                {<button onClick={() => setIsRunning(true)} style={{ color: "yellow" }}>Start Timer</button>}
+            <nav className="navbar-ques">
+                <div className="nav-left"> {!show ? <button onClick={generateQuestions}>Start Exam</button>
+                    : displayQuestions.length > 0 && <p>Time left is : {formatTime(timeLeft)}</p>} {" "}
+                </div>
+
+                <div className="nav-center">
+                    <h2>{subjectName} <br /> <span style={{ fontSize: "20px" }}>{`Subject ID is : ${subjectId}`}</span> </h2>
+                </div>
+
+                <div className="nav-right">
+                    {displayQuestions.length > 0 ? <button onClick={handleSubmit} disabled={notValid}>Submit Answer</button> : <p>Logged as: {userName} </p>}
+                </div>
             </nav>
+
             {displayQuestions.length === 0 && (
                 <h3 style={{ color: "yellow" }}>
-                    Click Generate to start exam
+                    Click Start to give Exam
                 </h3>
             )}
 
-
-
             {displayQuestions.length > 0 && (
-                <div>
-                    <p>Time left is : {formatTime(timeLeft)}</p>
+                <div className="display-ques">
                     <h4>
                         {currentIndex + 1}. {displayQuestions[currentIndex].question}
                     </h4>
@@ -85,24 +158,30 @@ function ShowQuestions() {
                         <div key={i}>
                             <input
                                 type="radio"
-                                name="group"
+                                name={`Question-${currentIndex}`}
+                                checked={answers[currentIndex] === i}
+                                onChange={() => {
+                                    setAnswers({
+                                        ...answers,
+                                        [currentIndex]: i
+                                    });
+                                    setError("");
+                                }}
                             />
-                            <label style={{ color: displayQuestions[currentIndex].correctAnswer === i ? "green" : "white" }}>{opt}</label>
+                            <label>{opt}</label>
                         </div>
                     ))}
+                    {error && <div style={{ color: "red" }}>{error}</div>}
                 </div>
             )}
             <br />
-            <button onClick={generateQuestions}>Generate</button> {" "}
-            <button onClick={() => {
-                if (currentIndex < displayQuestions.length - 1) {
-                    setCurrentIndex(currentIndex + 1);
-                    setTimeLeft(displayQuestions[currentIndex + 1].timeTaken)
-                }
 
-            }}>Next</button> {" "}
+            <button onClick={() => navigate(-1)}>Back</button> {" "}
 
-            <button onClick={handleSubmit}>Submit Answer</button>
+            {displayQuestions.length > 0 && <button onClick={handlePrev} disabled={currentIndex === 0}>Previous</button>} {" "}
+
+            {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
+
         </>
     )
 
@@ -110,3 +189,9 @@ function ShowQuestions() {
 
 export default ShowQuestions;
 
+
+
+
+
+
+{/* <label style={{ color: displayQuestions[currentIndex].correctAnswer === i ? "green" : "white" }}>{opt}</label> */ }
