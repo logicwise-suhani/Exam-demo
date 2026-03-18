@@ -13,7 +13,7 @@ function TeachLogin() {
   const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
 
-  const teacherEmail = "teacher@teach.com"; 
+  const teacherEmail = "teacher@teach.com";
   const teacherPassword = "Te111111";
 
   const teachValidate = (values) => {
@@ -24,7 +24,7 @@ function TeachLogin() {
     }
 
     if (values.password.length < 6) {
-      errors.password = "Password too short";
+      errors.password = "Invalid password";
     }
 
     return errors;
@@ -59,6 +59,7 @@ function TeachLogin() {
     } else {
       setLoginError("Invalid teacher credentials");
     }
+
   };
 
   const alreadyLogged = () => {
@@ -99,7 +100,7 @@ function TeachLogin() {
           value={data.password}
           onChange={handleChange}
           onBlur={handleBlur}
-        />
+        /> {" "}
         <span>{touched.password && errors.password}</span>
 
         <br />

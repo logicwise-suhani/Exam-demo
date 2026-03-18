@@ -69,9 +69,13 @@ function ShowQuestions() {
     useEffect(() => {
         if (!isRunning) return;
 
+        const nextIndex = currentIndex + 1;
+
         if (timeLeft <= 0) {
             setIsRunning(false);
-            return;
+            setCurrentIndex(nextIndex);
+            setTimeLeft(displayQuestions[nextIndex].timeTaken);
+            setIsRunning(true)
         }
 
         const interval = setInterval(() => {
@@ -80,7 +84,7 @@ function ShowQuestions() {
 
         return () => clearInterval(interval);
 
-    }, [isRunning, timeLeft]);
+    }, [isRunning, timeLeft, currentIndex, displayQuestions]);
 
     const notValid = Object.keys(answers).length !== displayQuestions.length;
 
@@ -129,6 +133,8 @@ function ShowQuestions() {
             setCurrentIndex(nextIndex);
             setTimeLeft(displayQuestions[nextIndex].timeTaken);
         }
+
+
     };
 
 
