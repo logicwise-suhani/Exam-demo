@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
+import { useRef } from "react";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
@@ -16,6 +17,8 @@ function ShowQuestions() {
     const [answers, setAnswers] = useState({});
     const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const dialogRef = useRef();
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
@@ -75,6 +78,7 @@ function ShowQuestions() {
 
             if (nextIndex >= displayQuestions.length) {
                 setIsRunning(false);
+                dialogRef.current.showModal()
                 return;
             }
 
@@ -90,7 +94,7 @@ function ShowQuestions() {
 
         return () => clearInterval(interval);
 
-    }, [isRunning, timeLeft, currentIndex, displayQuestions]);
+    }, [isRunning, timeLeft, currentIndex, displayQuestions, navigate]);
 
     const notValid = Object.keys(answers).length !== displayQuestions.length;
 
@@ -185,6 +189,13 @@ function ShowQuestions() {
                 {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
             </div>
 
+            <dialog ref={dialogRef}>
+                <p>Result in 5 minutes</p>
+
+                <button onClick={() => dialogRef.current.close()}>
+                    Close
+                </button>
+            </dialog>
         </>
     )
 
