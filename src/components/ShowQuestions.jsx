@@ -62,6 +62,8 @@ function ShowQuestions() {
         setTimeLeft(randomEight[0].timeTaken);
         setIsRunning(true);
         setShow(true);
+
+        localStorage.setItem("randomEight", JSON.stringify(randomEight));
     };
 
     useEffect(() => {
@@ -83,20 +85,24 @@ function ShowQuestions() {
     const notValid = Object.keys(answers).length !== displayQuestions.length;
 
     const handleSubmit = () => {
-
         if (notValid) {
             alert("Please answer all questions before submitting!");
             return;
         }
 
         const confirmSubmit = confirm("Are you sure want to Submit?");
-        const test = [...savedData];
-        if (confirmSubmit) {
-            localStorage.setItem("test", JSON.stringify(test));
-            console.log("Submitted!", test);
-        }
+        if (!confirmSubmit) return;
 
-    }
+
+        const result = displayQuestions.map((q, index) => ({
+            correctAnswer: q.correctAnswer,
+            selectedAnswer: answers[index],
+        }));
+
+        localStorage.setItem("test", JSON.stringify(result));
+
+        console.log("Submitted!", result);
+    };
 
     const handlePrev = () => {
         if (currentIndex === 0) return;
