@@ -34,7 +34,7 @@ function SelectSubject() {
         <>
 
             <nav className="navbar">
-                <p>Logged in as: <span style={{ color: "black" }}>{userName}</span></p>
+                <p>Logged in as: {userName}</p>
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
             </nav>
             <h3>Choose your Exam</h3>

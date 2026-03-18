@@ -72,15 +72,21 @@ function ShowQuestions() {
         const nextIndex = currentIndex + 1;
 
         if (timeLeft <= 0) {
+
+            if (nextIndex >= displayQuestions.length) {
+                setIsRunning(false);
+                return;
+            }
+
             setIsRunning(false);
             setCurrentIndex(nextIndex);
             setTimeLeft(displayQuestions[nextIndex].timeTaken);
-            setIsRunning(true)
+            setIsRunning(true);
         }
 
         const interval = setInterval(() => {
             setTimeLeft(prev => prev - 1);
-        }, 1000);
+        }, 100);
 
         return () => clearInterval(interval);
 
@@ -104,20 +110,7 @@ function ShowQuestions() {
         }));
 
         localStorage.setItem("test", JSON.stringify(result));
-
         console.log("Submitted!", result);
-    };
-
-    const handlePrev = () => {
-        if (currentIndex === 0) return;
-
-        const prevIndex = currentIndex - 1;
-        setCurrentIndex(prevIndex);
-
-        const prevQues = displayQuestions[prevIndex];
-        if (prevQues) {
-            setTimeLeft(prevQues.timeTaken);
-        }
     };
 
     const handleNext = () => {
@@ -142,7 +135,7 @@ function ShowQuestions() {
         <>
             <nav className="navbar-ques">
                 <div className="nav-left"> {!show ? <button onClick={generateQuestions}>Start Exam</button>
-                    : displayQuestions.length > 0 && <p>Time left is : {formatTime(timeLeft)}</p>} {" "}
+                    : displayQuestions.length > 0 && <p >Time left is : <span style={{ color: timeLeft < 10 ? "red" : "" }}>{formatTime(timeLeft)}</span> </p>} {" "}
                 </div>
 
                 <div className="nav-center">
@@ -188,11 +181,9 @@ function ShowQuestions() {
             )}
             <br />
 
-            <button onClick={() => navigate(-1)}>Back</button> {" "}
-
-            {displayQuestions.length > 0 && <button onClick={handlePrev} disabled={currentIndex === 0}>Previous</button>} {" "}
-
-            {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
+            <div className="show-next">
+                {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
+            </div>
 
         </>
     )
