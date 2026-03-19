@@ -1,10 +1,12 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { formatTime } from "../utils/timeFormatter";
 
 function ThankYou() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { subjectId } = useParams();
+    const [score, setScore] = useState(0);
 
     const [timeLeft, setTimeLeft] = useState(
         location.state?.remainingTime || 0
@@ -30,9 +32,23 @@ function ThankYou() {
         navigate("/login");
     };
 
-    const handleResult = (id) => {
-        const testId = localStorage.getItem(`test_${id}`)
-        console.log(testId);
+    const handleResult = () => {
+        const testId = localStorage.getItem(`test_${subjectId}`);
+        const resArray = JSON.parse(testId);
+        console.log(resArray);
+
+        resArray.forEach((t, index) => {
+            console.log(index)
+            const correctAnswer = t.correctAnswer;
+            const selectedAnswer = t.selectedAnswer;
+
+            if (correctAnswer === selectedAnswer) {
+                setScore(prev => prev + 1);
+            }
+            else {
+                setScore(0);
+            }
+        })
     }
 
     return (
@@ -45,6 +61,9 @@ function ThankYou() {
             ) : (
                 <>
                     <p onClick={handleResult} style={{ color: "red", cursor: "pointer" }}>Showing result...</p>
+                    <br />
+                    <p>{`Score: ${score}`}</p>
+
                 </>
             )}
 

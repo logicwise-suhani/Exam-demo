@@ -56,7 +56,7 @@ function App() {
         <Route path="/preview/:subjectId" element={<Preview />} />
         <Route path="/showQues/:subjectId" element={<SavedQuestions />} />
 
-        <Route path="/thank-you" element={<ThankYou />} />
+        <Route path="/thank-you/:subjectId" element={<ThankYou />} />
 
         <Route
           path="/createSubject"

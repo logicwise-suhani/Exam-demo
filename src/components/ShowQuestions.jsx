@@ -52,7 +52,6 @@ function ShowQuestions() {
         }
     }, []);
 
-
     const generateQuestions = () => {
         if (savedData.length === 0) {
             alert("Questionnaire is empty!");
@@ -123,7 +122,7 @@ function ShowQuestions() {
 
         if (dialogTimeLeft <= 0) {
             setIsDialogRunning(false);
-            navigate("/thank-you");
+            navigate(`/thank-you/${subjectId}`);
             return;
         }
 
@@ -132,7 +131,7 @@ function ShowQuestions() {
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [isDialogRunning, dialogTimeLeft, navigate]);
+    }, [isDialogRunning, dialogTimeLeft, navigate, subjectId]);
 
     useEffect(() => {
         const submitted = localStorage.getItem("submitted");
@@ -166,7 +165,7 @@ function ShowQuestions() {
         setIsSubmitted(true);
         localStorage.setItem("submitted", "true");
         setIsRunning(false);
-        navigate("/thank-you");
+        navigate(`/thank-you/${subjectId}`);
     };
 
     const handleNext = () => {
@@ -182,8 +181,6 @@ function ShowQuestions() {
             setCurrentIndex(nextIndex);
             setTimeLeft(displayQuestions[nextIndex].timeTaken);
         }
-
-
     };
 
     const handleDialogClose = () => {
@@ -191,7 +188,7 @@ function ShowQuestions() {
         localStorage.setItem("remainingTime", dialogTimeLeft);
         dialogRef.current.close();
 
-        navigate("/thank-you", {
+        navigate(`/thank-you/${subjectId}`, {
             state: { remainingTime: dialogTimeLeft }
         });
     };
