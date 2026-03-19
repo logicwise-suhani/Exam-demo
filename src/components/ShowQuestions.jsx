@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useRef } from "react";
@@ -16,6 +16,7 @@ function ShowQuestions() {
     const [userName, setUserName] = useState("");
     const [answers, setAnswers] = useState({});
     const [error, setError] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const navigate = useNavigate();
 
     const dialogRef = useRef();
@@ -69,6 +70,15 @@ function ShowQuestions() {
         localStorage.setItem("randomEight", JSON.stringify(randomEight));
     };
 
+    const getResult = useCallback(
+        () => {
+            return displayQuestions.map((q, index) => ({
+                correctAnswer: q.correctAnswer,
+                selectedAnswer: answers[index] || null,
+            }));
+        }, [answers, displayQuestions])
+
+
     useEffect(() => {
         if (!isRunning) return;
 
@@ -79,6 +89,11 @@ function ShowQuestions() {
             if (nextIndex >= displayQuestions.length) {
                 setIsRunning(false);
                 dialogRef.current.showModal()
+                setIsSubmitted(true);
+                localStorage.setItem("submitted", "true");
+                const result = getResult();
+                localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
+                navigate("/thank-you");
                 return;
             }
 
@@ -94,27 +109,36 @@ function ShowQuestions() {
 
         return () => clearInterval(interval);
 
-    }, [isRunning, timeLeft, currentIndex, displayQuestions, navigate]);
+    }, [isRunning, timeLeft, currentIndex, displayQuestions, navigate, getResult, subjectId, isSubmitted]);
 
-    const notValid = Object.keys(answers).length !== displayQuestions.length;
+    useEffect(() => {
+        const submitted = localStorage.getItem("submitted");
+        if (submitted === "true") {
+            setIsSubmitted(true);
+        }
+    }, []);
+
+    // const notValid = Object.keys(answers).length !== displayQuestions.length;
 
     const handleSubmit = () => {
-        if (notValid) {
-            alert("Please answer all questions before submitting!");
-            return;
-        }
+        // if (notValid) {
+        //     alert("Please answer all questions before submitting!");
+        //     return;
+        // }
+        if (isSubmitted) return;
 
         const confirmSubmit = confirm("Are you sure want to Submit?");
         if (!confirmSubmit) return;
 
+        const result = getResult();
 
-        const result = displayQuestions.map((q, index) => ({
-            correctAnswer: q.correctAnswer,
-            selectedAnswer: answers[index],
-        }));
-
-        localStorage.setItem("test", JSON.stringify(result));
+        localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
         console.log("Submitted!", result);
+
+        setIsSubmitted(true);
+        localStorage.setItem("submitted", "true");
+        setIsRunning(false);
+        navigate("/thank-you");
     };
 
     const handleNext = () => {
@@ -147,7 +171,8 @@ function ShowQuestions() {
                 </div>
 
                 <div className="nav-right">
-                    {displayQuestions.length > 0 ? <button onClick={handleSubmit} disabled={notValid}>Submit Answer</button> : <p>Logged as: {userName} </p>}
+                    {displayQuestions.length > 0 ? <button onClick={handleSubmit} disabled={isSubmitted}>{isSubmitted ? "Submitted" : "Submit"}</button>
+                        : <p>Logged as: {userName} </p>}
                 </div>
             </nav>
 
@@ -189,7 +214,7 @@ function ShowQuestions() {
                 {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
             </div>
 
-            <dialog ref={dialogRef}>
+            <dialog ref={dialogRef} className="dialog-box">
                 <p>Result in 5 minutes</p>
 
                 <button onClick={() => dialogRef.current.close()}>

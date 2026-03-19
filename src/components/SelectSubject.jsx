@@ -22,6 +22,11 @@ function SelectSubject() {
     }, []);
 
     const handleClick = (id) => {
+        const test = localStorage.getItem(`test_${id}`);
+        if (test) {
+            alert("Already attempted!")
+            return;
+        }
         navigate(`/showQues/${id}`);
     }
 

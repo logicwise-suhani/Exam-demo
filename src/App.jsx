@@ -12,6 +12,7 @@ import { PublicRoute } from "./components/PublicRoute";
 import Preview from "./components/Preview";
 import SelectSubject from "./components/SelectSubject";
 import SavedQuestions from "./components/ShowQuestions";
+import ThankYou from "./components/ThankYou";
 
 function App() {
 
@@ -54,6 +55,8 @@ function App() {
 
         <Route path="/preview/:subjectId" element={<Preview />} />
         <Route path="/showQues/:subjectId" element={<SavedQuestions />} />
+
+        <Route path="/thank-you" element={<ThankYou />} />
 
         <Route
           path="/createSubject"
