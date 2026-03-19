@@ -17,6 +17,8 @@ function ShowQuestions() {
     const [answers, setAnswers] = useState({});
     const [error, setError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [dialogTimeLeft, setDialogTimeLeft] = useState(0);
+    const [isDialogRunning, setIsDialogRunning] = useState(false);
     const navigate = useNavigate();
 
     const dialogRef = useRef();
@@ -91,15 +93,14 @@ function ShowQuestions() {
 
                 if (dialogRef.current) {
                     dialogRef.current.showModal();
+                    setDialogTimeLeft(300);
+                    setIsDialogRunning(true);
                 }
 
                 setIsSubmitted(true);
                 localStorage.setItem("submitted", "true");
                 const result = getResult();
                 localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
-                setTimeout(() => {
-                    navigate("/thank-you");
-                }, 3000);
                 return;
             }
 
@@ -111,11 +112,27 @@ function ShowQuestions() {
 
         const interval = setInterval(() => {
             setTimeLeft(prev => prev - 1);
-        }, 100);
+        }, 1000);
 
         return () => clearInterval(interval);
 
     }, [isRunning, timeLeft, currentIndex, displayQuestions, navigate, getResult, subjectId, isSubmitted]);
+
+    useEffect(() => {
+        if (!isDialogRunning) return;
+
+        if (dialogTimeLeft <= 0) {
+            setIsDialogRunning(false);
+            navigate("/thank-you");
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setDialogTimeLeft(prev => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [isDialogRunning, dialogTimeLeft, navigate]);
 
     useEffect(() => {
         const submitted = localStorage.getItem("submitted");
@@ -167,6 +184,16 @@ function ShowQuestions() {
         }
 
 
+    };
+
+    const handleDialogClose = () => {
+        setIsDialogRunning(false);
+        localStorage.setItem("remainingTime", dialogTimeLeft);
+        dialogRef.current.close();
+
+        navigate("/thank-you", {
+            state: { remainingTime: dialogTimeLeft }
+        });
     };
 
 
@@ -226,9 +253,9 @@ function ShowQuestions() {
             </div>
 
             <dialog ref={dialogRef} className="dialog-box">
-                <p>Result in 5 minutes</p>
+                <p>Result in: {formatTime(dialogTimeLeft)} minutes</p>
 
-                <button onClick={() => dialogRef.current.close()}>
+                <button onClick={handleDialogClose}>
                     Close
                 </button>
             </dialog>

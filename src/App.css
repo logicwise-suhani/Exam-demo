@@ -297,6 +297,7 @@ h3 {
   background-color: pink;
   color: crimson;
   text-align: center;
+  border-color: pink;
 }
 
 .dialog-box::backdrop {
