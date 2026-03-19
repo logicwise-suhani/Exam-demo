@@ -88,12 +88,18 @@ function ShowQuestions() {
 
             if (nextIndex >= displayQuestions.length) {
                 setIsRunning(false);
-                dialogRef.current.showModal()
+
+                if (dialogRef.current) {
+                    dialogRef.current.showModal();
+                }
+
                 setIsSubmitted(true);
                 localStorage.setItem("submitted", "true");
                 const result = getResult();
                 localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
-                navigate("/thank-you");
+                setTimeout(() => {
+                    navigate("/thank-you");
+                }, 3000);
                 return;
             }
 
@@ -117,6 +123,11 @@ function ShowQuestions() {
             setIsSubmitted(true);
         }
     }, []);
+
+    useEffect(() => {
+        const test = localStorage.getItem(`test_${subjectId}`);
+        if (test) navigate("/selectSubject");
+    }, [subjectId, navigate]);
 
     // const notValid = Object.keys(answers).length !== displayQuestions.length;
 
