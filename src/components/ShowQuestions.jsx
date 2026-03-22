@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
-import { useRef } from "react";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
@@ -165,7 +164,12 @@ function ShowQuestions() {
         setIsSubmitted(true);
         localStorage.setItem("submitted", "true");
         setIsRunning(false);
-        navigate(`/thank-you/${subjectId}`);
+
+        if (dialogRef.current) {
+            dialogRef.current.showModal();
+            setDialogTimeLeft(300);
+            setIsDialogRunning(true);
+        }
     };
 
     const handleNext = () => {
