@@ -70,10 +70,10 @@ function ShowQuestions() {
             alert("Questionnaire is empty!");
             return;
         }
-
         const shuffled = [...savedData].sort(() => 0.3 - Math.random());
 
         const randomEight = shuffled.slice(0, 8);
+
         setDisplayQuestions(randomEight);
         setCurrentIndex(0);
 
@@ -213,6 +213,7 @@ function ShowQuestions() {
     };
 
 
+
     return (
         <>
             <nav className="navbar-ques">
@@ -267,6 +268,8 @@ function ShowQuestions() {
             <div className="show-next">
                 {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
             </div>
+
+            {displayQuestions.length > 0 ? "" : <button onClick={() => navigate("/selectSubject")}>Back</button>}
 
             <dialog ref={dialogRef} className="dialog-box">
                 <p>Result in: {formatTime(dialogTimeLeft)} minutes</p>

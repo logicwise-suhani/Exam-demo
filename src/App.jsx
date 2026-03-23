@@ -4,7 +4,6 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import CreateSubject from "./components/CreateSubject";
-// import SolveQuestion from "./components/SelectSubject";
 import TeachLogin from "./components/TeachLogin";
 import CreateExam from "./components/CreateExam";
 import PrivateRoute from "./components/PrivateRoute";
@@ -15,7 +14,6 @@ import SavedQuestions from "./components/ShowQuestions";
 import ThankYou from "./components/ThankYou";
 
 function App() {
-
   const navigate = useNavigate();
 
   const handleLogOut = () => {
@@ -80,6 +78,7 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+
     </>
   );
 }

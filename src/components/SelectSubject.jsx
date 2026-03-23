@@ -64,10 +64,7 @@ function SelectSubject() {
             <nav className="navbar">
 
                 {timeLeft > 0 ? <p>Result in: {formatTime(timeLeft)}</p>
-                    : <p onClick={() => {
-                        const id = localStorage.getItem("currentSubjectId");
-                        navigate(`/thank-you/${id}`);
-                    }} style={{ color: "red", cursor: "pointer" }}>View Result</p>}
+                    : ""}
 
                 <p>Logged in as: {userName}</p>
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
@@ -82,10 +79,9 @@ function SelectSubject() {
             </div>
             <br /> <br />
 
-            <div className="select-btn">
-                <button onClick={() => navigate("/register")}>Back</button> {" "}
+            {/* <div className="select-btn">
                 <button onClick={() => navigate("/")}>Home</button>
-            </div>
+            </div> */}
         </>
     )
 }
