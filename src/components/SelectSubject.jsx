@@ -1,10 +1,31 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatTime } from "../utils/timeFormatter";
 
 function SelectSubject() {
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
     const [userName, setUserName] = useState("");
+    const [timeLeft, setTimeLeft] = useState(() => {
+        const saved = localStorage.getItem("remainingTime");
+        return saved ? Number(saved) : 0;
+    });
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTimeLeft(prev => {
+                if (prev <= 1) {
+                    localStorage.setItem("remainingTime", 0);
+                    return 0;
+                }
+                const updated = prev - 1;
+                localStorage.setItem("remainingTime", updated);
+                return updated > 0 ? updated : 0;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
@@ -27,6 +48,8 @@ function SelectSubject() {
             alert("Already attempted!")
             return;
         }
+
+        localStorage.setItem("currentSubjectId", id);
         navigate(`/showQues/${id}`);
     }
 
@@ -39,6 +62,13 @@ function SelectSubject() {
         <>
 
             <nav className="navbar">
+
+                {timeLeft > 0 ? <p>Result in: {formatTime(timeLeft)}</p>
+                    : <p onClick={() => {
+                        const id = localStorage.getItem("currentSubjectId");
+                        navigate(`/thank-you/${id}`);
+                    }} style={{ color: "red", cursor: "pointer" }}>View Result</p>}
+
                 <p>Logged in as: {userName}</p>
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
             </nav>
@@ -46,7 +76,7 @@ function SelectSubject() {
             <div className="select-subject">
                 {subjects.map((item, index) => (
                     <div key={index}>
-                        <label style={{ cursor: "pointer", color: "pink" }} onClick={() => handleClick(item.id)}> {item.subject} </label>
+                        <label style={{ cursor: "pointer", color: "pink" }} onClick={() => handleClick(item.id)}> {item.subject}</label>
                     </div>
                 ))}
             </div>
@@ -60,4 +90,15 @@ function SelectSubject() {
     )
 }
 
-export default SelectSubject;  
+export default SelectSubject;
+
+
+
+
+
+
+
+{/* <button onClick={() => {
+    const id = localStorage.getItem("currentSubjectId");
+    navigate(`/thank-you/${id}`);
+}} style={{ color: "black" }}>View Result</button> */}

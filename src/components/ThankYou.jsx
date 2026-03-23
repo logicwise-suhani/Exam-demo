@@ -1,17 +1,17 @@
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { formatTime } from "../utils/timeFormatter";
 
 function ThankYou() {
     const navigate = useNavigate();
-    const location = useLocation();
     const { subjectId } = useParams();
     const dialogRef = useRef();
     const [score, setScore] = useState(0);
 
-    const [timeLeft, setTimeLeft] = useState(
-        location.state?.remainingTime || 0
-    );
+    const [timeLeft, setTimeLeft] = useState(() => {
+        const saved = localStorage.getItem("remainingTime");
+        return saved ? Number(saved) : 0;
+    });
 
     useEffect(() => {
         if (timeLeft <= 0) return;
@@ -20,7 +20,7 @@ function ThankYou() {
             setTimeLeft(prev => {
                 const updated = prev - 1;
                 localStorage.setItem("remainingTime", updated)
-                return updated;
+                return updated > 0 ? updated : 0;
             });
         }, 1000);
 
@@ -66,6 +66,11 @@ function ThankYou() {
     }
 
     const handleClose = () => {
+        const data = localStorage.getItem(`test_${subjectId}`);
+
+        if (data) {
+            localStorage.setItem(`result_${subjectId}`, score)
+        }
         dialogRef.current.close();
     };
 
