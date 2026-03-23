@@ -1,11 +1,12 @@
 import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatTime } from "../utils/timeFormatter";
 
 function ThankYou() {
     const navigate = useNavigate();
     const location = useLocation();
     const { subjectId } = useParams();
+    const dialogRef = useRef();
     const [score, setScore] = useState(0);
 
     const [timeLeft, setTimeLeft] = useState(
@@ -21,7 +22,7 @@ function ThankYou() {
                 localStorage.setItem("remainingTime", updated)
                 return updated;
             });
-        }, 100);
+        }, 1000);
 
         return () => clearInterval(interval);
     }, [timeLeft]);
@@ -45,25 +46,28 @@ function ThankYou() {
     const handleResult = () => {
         const testId = localStorage.getItem(`test_${subjectId}`);
         const resArray = JSON.parse(testId);
-        console.log(resArray);
+        let totalScore = 0;
 
-        resArray.forEach((t, index) => {
-            console.log(index)
+        resArray.forEach((t) => {
             const correctAnswer = t.correctAnswer;
             const selectedAnswer = t.selectedAnswer;
 
             if (correctAnswer === selectedAnswer) {
-                console.log("Correct");
-                // setScore(prev => prev + 1);
-
+                totalScore += 1;
             }
-            else {
-                console.log("Incorrect");
-                // setScore(0);
-            }
-        })
+        });
 
+        setScore(totalScore)
     }
+
+    const handleDialog = () => {
+        handleResult();
+        dialogRef.current.showModal();
+    }
+
+    const handleClose = () => {
+        dialogRef.current.close();
+    };
 
     return (
         <>
@@ -74,10 +78,7 @@ function ThankYou() {
                 <p>Result in: {formatTime(timeLeft)}</p>
             ) : (
                 <>
-                    <p onClick={handleResult} style={{ color: "red", cursor: "pointer" }}>Showing result...</p>
-                    <br />
-                    <p>{`Score: ${score}`}</p>
-
+                    <p onClick={handleDialog} style={{ color: "red", cursor: "pointer" }}>Click to show result</p>
                 </>
             )}
 
@@ -87,8 +88,45 @@ function ThankYou() {
                 Give another Test
             </button>{" "}
             <button onClick={handleLogOut}>LogOut</button>
+
+            <dialog ref={dialogRef} className="score-dialog">
+                <p>Marks: {score} / 8 </p>
+                <p>Result: {score > 6 ? <span style={{ color: "green" }}>PASS</span> : <span style={{ color: "red" }}>FAIL</span>} </p>
+
+                <button onClick={handleClose}>
+                    Close
+                </button>
+            </dialog>
         </>
     );
 }
 
 export default ThankYou;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const handleResult = () => {
+//     const testId = localStorage.getItem(`test_${subjectId}`);
+//     const resArray = JSON.parse(testId);
+
+//     const totalScore = resArray.reduce((acc, t) => {
+//         return acc + (t.correctAnswer === t.selectedAnswer ? 1 : 0);
+//     }, 0);
+
+//     setScore(totalScore);
+// };

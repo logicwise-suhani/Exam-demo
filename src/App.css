@@ -317,3 +317,31 @@ h3 {
   cursor: pointer;
   border-color: bisque;
 }
+
+.score-dialog {
+  width: 600px;
+  padding: 40px;
+  padding-bottom: 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: pink;
+  color: black;
+  border-color: pink;
+}
+
+.score-dialog p {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-weight: 400;
+  font-size: 30px;
+}
+
+.score-dialog button {
+  padding: 8px 16px;
+  background-color: bisque;
+  border: none;
+  cursor: pointer;
+  border-color: bisque;
+  margin-left: 500px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: black;
+}

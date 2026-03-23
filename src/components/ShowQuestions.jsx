@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 
@@ -19,7 +19,6 @@ function ShowQuestions() {
     const [dialogTimeLeft, setDialogTimeLeft] = useState(0);
     const [isDialogRunning, setIsDialogRunning] = useState(false);
     const navigate = useNavigate();
-
     const dialogRef = useRef();
 
     useEffect(() => {
@@ -181,7 +180,11 @@ function ShowQuestions() {
         setIsSubmitted(true);
         localStorage.setItem("submitted", "true");
         setIsRunning(false);
-        navigate(`/thank-you/${subjectId}`);
+        if (dialogRef.current) {
+            dialogRef.current.showModal();
+            setDialogTimeLeft(300);
+            setIsDialogRunning(true);
+        }
     };
 
     const handleNext = () => {
@@ -229,7 +232,7 @@ function ShowQuestions() {
 
             {displayQuestions.length === 0 && (
                 <h3 style={{ color: "yellow" }}>
-                    Click Start to give Exam
+                    {savedData.length === 0 ? "Questionnaire is empty!" : "Click Start to give Exam"}
                 </h3>
             )}
 
