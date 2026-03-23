@@ -26,6 +26,16 @@ function ThankYou() {
         return () => clearInterval(interval);
     }, [timeLeft]);
 
+    useEffect(() => {
+        const savedExam = localStorage.getItem(`exam_state_${subjectId}`);
+        const remainingTime = localStorage.getItem("remainingTime");
+
+        if (savedExam) {
+            setTimeLeft(remainingTime > 0 ? remainingTime : 0);
+        }
+
+    }, [subjectId]);
+
     const handleLogOut = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("remainingTime");
@@ -43,12 +53,16 @@ function ThankYou() {
             const selectedAnswer = t.selectedAnswer;
 
             if (correctAnswer === selectedAnswer) {
-                setScore(prev => prev + 1);
+                console.log("Correct");
+                // setScore(prev => prev + 1);
+
             }
             else {
-                setScore(0);
+                console.log("Incorrect");
+                // setScore(0);
             }
         })
+
     }
 
     return (

@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
-import { useRef } from "react";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
@@ -51,6 +50,21 @@ function ShowQuestions() {
             setUserName(name.email)
         }
     }, []);
+
+    useEffect(() => {
+        if (!show) return;
+
+        const examState = {
+            displayQuestions,
+            currentIndex,
+            timeLeft,
+            answers,
+            isRunning
+        };
+
+        localStorage.setItem(`exam_state_${subjectId}`, JSON.stringify(examState));
+
+    }, [displayQuestions, currentIndex, timeLeft, answers, isRunning, show, subjectId]);
 
     const generateQuestions = () => {
         if (savedData.length === 0) {
@@ -107,6 +121,8 @@ function ShowQuestions() {
             setCurrentIndex(nextIndex);
             setTimeLeft(displayQuestions[nextIndex].timeTaken);
             setIsRunning(true);
+
+            localStorage.removeItem(`exam_state_${subjectId}`);
         }
 
         const interval = setInterval(() => {
@@ -165,7 +181,13 @@ function ShowQuestions() {
         setIsSubmitted(true);
         localStorage.setItem("submitted", "true");
         setIsRunning(false);
-        navigate(`/thank-you/${subjectId}`);
+
+        if (dialogRef.current) {
+            dialogRef.current.showModal();
+            setDialogTimeLeft(300);
+            setIsDialogRunning(true);
+        }
+        // localStorage.removeItem(`exam_state_${subjectId}`);
     };
 
     const handleNext = () => {
