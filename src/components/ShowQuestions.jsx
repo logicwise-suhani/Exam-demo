@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 
@@ -181,13 +181,7 @@ function ShowQuestions() {
         setIsSubmitted(true);
         localStorage.setItem("submitted", "true");
         setIsRunning(false);
-
-        if (dialogRef.current) {
-            dialogRef.current.showModal();
-            setDialogTimeLeft(300);
-            setIsDialogRunning(true);
-        }
-        // localStorage.removeItem(`exam_state_${subjectId}`);
+        navigate(`/thank-you/${subjectId}`);
     };
 
     const handleNext = () => {
