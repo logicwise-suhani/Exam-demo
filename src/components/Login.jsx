@@ -36,7 +36,7 @@ function Login() {
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     if (!passwordRegex.test(values.password)) {
       errors.password =
-        "Password must be 8+ chars, include upper, lower & number";
+        "Invalid Password";
     }
 
     return errors;
@@ -93,8 +93,8 @@ function Login() {
         value={data.email}
         onChange={handleChange}
         onBlur={handleBlur}
-      />
-      <span>{touched.email && errors.email}</span>
+      /> <br />
+      <span style={{ color: "red" }}>{touched.email && errors.email}</span>
 
       <br />
 
@@ -105,18 +105,21 @@ function Login() {
         value={data.password}
         onChange={handleChange}
         onBlur={handleBlur}
-      />
-      <span>{touched.password && errors.password}</span>
+      /> <br />
+      <span style={{ color: "red" }}>{touched.password && errors.password}</span>
 
       <br />
 
       {loginError && <p style={{ color: "red" }}>{loginError}</p>}
+      <br />
+
+      <button onClick={() => navigate(-1)}>Back</button> {" "}
 
       <button onClick={handleLogin} disabled={!isValid}>
         Login
       </button> {" "}
 
-      <p onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>New student? {" "} Register here</p>
+      <p>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
     </div>
   );
 }

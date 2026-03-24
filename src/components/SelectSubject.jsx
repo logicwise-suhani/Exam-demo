@@ -1,15 +1,24 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 
 function SelectSubject() {
     const navigate = useNavigate();
+    const { subjectId } = useParams();
     const [subjects, setSubjects] = useState([]);
     const [userName, setUserName] = useState("");
     const [timeLeft, setTimeLeft] = useState(() => {
         const saved = localStorage.getItem("remainingTime");
         return saved ? Number(saved) : 0;
     });
+    const location = useLocation();
+
+    useEffect(() => {
+        window.history.pushState(null, document.title, window.location.href);
+        window.addEventListener('popstate', () => {
+            window.history.pushState(null, document.title, window.location.href);
+        });
+    }, [location]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -58,13 +67,26 @@ function SelectSubject() {
         navigate("/login");
     }
 
+    const handleResult = () => {
+
+        const keys = Object.keys(localStorage);
+
+        const resultKey = keys.find(key => key.startsWith("result_"));
+        if (!resultKey) {
+            alert("No result found");
+            return;
+        }
+
+        const id = resultKey.split("_")[1];
+        navigate(`/thank-you/${id}`);
+    };
+
     return (
         <>
-
             <nav className="navbar">
 
                 {timeLeft > 0 ? <p>Result in: {formatTime(timeLeft)}</p>
-                    : ""}
+                    : <button onClick={handleResult} style={{ color: "black" }}>View Result</button>}
 
                 <p>Logged in as: {userName}</p>
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
@@ -77,11 +99,6 @@ function SelectSubject() {
                     </div>
                 ))}
             </div>
-            <br /> <br />
-
-            {/* <div className="select-btn">
-                <button onClick={() => navigate("/")}>Home</button>
-            </div> */}
         </>
     )
 }

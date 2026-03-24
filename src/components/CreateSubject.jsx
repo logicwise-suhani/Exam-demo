@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function CreateSubject() {
     const navigate = useNavigate();
     const [show, setShow] = useState(false)
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
+    const [error, setError] = useState("");
+    const location = useLocation();
 
+    useEffect(() => {
+        window.history.pushState(null, document.title, window.location.href);
+        window.addEventListener('popstate', () => {
+            window.history.pushState(null, document.title, window.location.href);
+        });
+    }, [location]);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
@@ -23,30 +31,47 @@ function CreateSubject() {
     }
 
     const showAndAddSubject = () => {
-        setShow((prev) => !prev)
-        if (show && addSubject.trim() !== "") {
-            let getSubList = [...listSubject]
-
-            const sub = {
-                id: getSubList.length + 1,
-                subject: addSubject.trim()
-            }
-            getSubList.push(sub)
-            const updatedList = updateIDs(getSubList);
-            setListSubject(updatedList)
-            localStorage.setItem("subjects", JSON.stringify(updatedList))
-            setAddSubject("")
+        if (!show) {
+            setShow(true);
+            return;
         }
-    }
 
-    const handleBack = () => {
-        const user = JSON.parse(localStorage.getItem("user")) || [];
+        const subject = addSubject.trim();
 
-        if (user.role === "teacher") {
-            navigate("/");
-        } else if (user.role === "student") {
-            navigate("/selectSubject");
+        if (!subject) {
+            setError("Subject name is required");
+            return;
         }
+
+        if (subject.length < 3) {
+            setError("Subject must be at least 3 characters");
+            return;
+        }
+
+        const isDuplicate = listSubject.some(
+            (item) => item.subject.toLowerCase() === subject.toLowerCase()
+        );
+
+        if (isDuplicate) {
+            setError("Subject already exists");
+            return;
+        }
+
+        setError("");
+
+        let getSubList = [...listSubject]
+
+        const sub = {
+            id: getSubList.length + 1,
+            subject: addSubject.trim()
+        }
+        getSubList.push(sub)
+        const updatedList = updateIDs(getSubList);
+        setListSubject(updatedList)
+        localStorage.setItem("subjects", JSON.stringify(updatedList))
+        setAddSubject("")
+        setShow(false);
+
     }
 
     const handleDelete = (id) => {
@@ -75,19 +100,38 @@ function CreateSubject() {
         }
     };
 
+    const handleLogOut = () => {
+        const confirmLogOut = confirm("Are you sure want to Log Out?");
+
+        if (confirmLogOut) {
+            localStorage.removeItem("user") || [];
+            navigate("/teacher-login")
+        }
+    }
+
     return (
         <>
-            <div className="create-subject">
-                <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button> <br /> <br />
+            <nav className="navbar">
+                <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
+            </nav>
 
-                {show && <input placeholder="Enter Subject" value={addSubject} onChange={(e) => setAddSubject(e.target.value)} />}
+            <div className="create-subject">
+                {show && (
+                    <>
+                        <input placeholder="Enter Subject" value={addSubject} onChange={(e) => setAddSubject(e.target.value)}
+                        />
+                        {error && (
+                            <p style={{ color: "red" }}>{error}</p>
+                        )}
+                    </>
+                )}  <br /> <br />
+
+                <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button>
                 <br /> <br />
-                <table border="1">
+                < table border="1">
                     <thead>
                         <tr>
-                            <td>
-                                ID
-                            </td>
+                            <td>ID</td>
                             <td>Subject</td>
                             <td colSpan="3" style={{ textAlign: "center" }}>Action</td>
                         </tr>
@@ -117,9 +161,7 @@ function CreateSubject() {
 
                 <br />
 
-            </div>
-            <button onClick={handleBack}>Back</button> {" "}
-
+            </div >
         </>
 
     )

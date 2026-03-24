@@ -16,10 +16,10 @@ import ThankYou from "./components/ThankYou";
 function App() {
   const navigate = useNavigate();
 
-  const handleLogOut = () => {
-    localStorage.removeItem("user") || [];
-    navigate("/teacher-login")
-  }
+  // const handleLogOut = () => {
+  //   localStorage.removeItem("user") || [];
+  //   navigate("/teacher-login")
+  // }
 
   return (
     <>
@@ -61,7 +61,7 @@ function App() {
           element={
             <PrivateRoute allowedRoles={["teacher"]}>
               <CreateSubject />
-              <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
+              {/* <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button> */}
             </PrivateRoute>
           }
         />
