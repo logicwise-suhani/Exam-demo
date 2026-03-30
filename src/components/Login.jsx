@@ -113,7 +113,7 @@ function Login() {
       {loginError && <p style={{ color: "red" }}>{loginError}</p>}
       <br />
 
-      <button onClick={() => navigate(-1)}>Back</button> {" "}
+      <button onClick={() => navigate("/")}>Back</button> {" "}
 
       <button onClick={handleLogin} disabled={!isValid}>
         Login

@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { formatTime } from "../utils/timeFormatter";
+import { useLocation, useNavigate } from "react-router-dom";
+// import { formatTime } from "../utils/timeFormatter";
 
 function SelectSubject() {
     const navigate = useNavigate();
-    const { subjectId } = useParams();
     const [subjects, setSubjects] = useState([]);
     const [userName, setUserName] = useState("");
-    const [timeLeft, setTimeLeft] = useState(() => {
-        const saved = localStorage.getItem("remainingTime");
-        return saved ? Number(saved) : 0;
-    });
+    // const [timeLeft, setTimeLeft] = useState(() => {
+    //     const saved = localStorage.getItem("remainingTime");
+    //     return saved ? Number(saved) : 0;
+    // });
     const location = useLocation();
 
     useEffect(() => {
@@ -20,21 +19,21 @@ function SelectSubject() {
         });
     }, [location]);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    localStorage.setItem("remainingTime", 0);
-                    return 0;
-                }
-                const updated = prev - 1;
-                localStorage.setItem("remainingTime", updated);
-                return updated > 0 ? updated : 0;
-            });
-        }, 1000);
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         setTimeLeft(prev => {
+    //             if (prev <= 1) {
+    //                 localStorage.setItem("remainingTime", 0);
+    //                 return 0;
+    //             }
+    //             const updated = prev - 1;
+    //             localStorage.setItem("remainingTime", updated);
+    //             return updated > 0 ? updated : 0;
+    //         });
+    //     }, 1000);
 
-        return () => clearInterval(interval);
-    }, []);
+    //     return () => clearInterval(interval);
+    // }, []);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
@@ -67,28 +66,12 @@ function SelectSubject() {
         navigate("/login");
     }
 
-    const handleResult = () => {
-
-        const keys = Object.keys(localStorage);
-
-        const resultKey = keys.find(key => key.startsWith("result_"));
-        if (!resultKey) {
-            alert("No result found");
-            return;
-        }
-
-        const id = resultKey.split("_")[1];
-        navigate(`/thank-you/${id}`);
-    };
-
     return (
         <>
             <nav className="navbar">
+                <p onClick={() => navigate("/result")} style={{ color: "white", cursor: "pointer" }}>View Result</p>
 
-                {timeLeft > 0 ? <p>Result in: {formatTime(timeLeft)}</p>
-                    : <button onClick={handleResult} style={{ color: "black" }}>View Result</button>}
-
-                <p>Logged in as: {userName}</p>
+                <p>Logged as: {userName}</p>
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
             </nav>
             <h3>Choose your Exam</h3>

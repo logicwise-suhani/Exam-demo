@@ -88,49 +88,45 @@ function ShowQuestions() {
         () => {
             return displayQuestions.map((q, index) => ({
                 correctAnswer: q.correctAnswer,
-                selectedAnswer: answers[index] || null,
+                selectedAnswer: answers[index],
             }));
         }, [answers, displayQuestions])
 
-
     useEffect(() => {
         if (!isRunning) return;
-
-        const nextIndex = currentIndex + 1;
-
-        if (timeLeft <= 0) {
-
-            if (nextIndex >= displayQuestions.length) {
-                setIsRunning(false);
-
-                if (dialogRef.current) {
-                    dialogRef.current.showModal();
-                    setDialogTimeLeft(300);
-                    setIsDialogRunning(true);
-                }
-
-                setIsSubmitted(true);
-                localStorage.setItem("submitted", "true");
-                const result = getResult();
-                localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
-                return;
-            }
-
-            setIsRunning(false);
-            setCurrentIndex(nextIndex);
-            setTimeLeft(displayQuestions[nextIndex].timeTaken);
-            setIsRunning(true);
-
-            localStorage.removeItem(`exam_state_${subjectId}`);
-        }
 
         const interval = setInterval(() => {
             setTimeLeft(prev => prev - 1);
         }, 1000);
 
         return () => clearInterval(interval);
+    }, [isRunning]);
 
-    }, [isRunning, timeLeft, currentIndex, displayQuestions, navigate, getResult, subjectId, isSubmitted]);
+    useEffect(() => {
+        if (!isRunning) return;
+
+        if (timeLeft <= 0) {
+            const nextIndex = currentIndex + 1;
+
+            if (nextIndex >= displayQuestions.length) {
+                setIsRunning(false);
+
+                const result = getResult();
+                localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
+                localStorage.setItem(`submitted_${subjectId}`, "true");
+
+                setIsSubmitted(true);
+
+                dialogRef.current?.showModal();
+                setDialogTimeLeft(300);
+                setIsDialogRunning(true);
+                return;
+            }
+
+            setCurrentIndex(nextIndex);
+            setTimeLeft(displayQuestions[nextIndex].timeTaken);
+        }
+    }, [timeLeft, isRunning, currentIndex, displayQuestions, getResult, subjectId]);
 
     useEffect(() => {
         if (!isDialogRunning) return;
@@ -149,15 +145,17 @@ function ShowQuestions() {
     }, [isDialogRunning, dialogTimeLeft, navigate, subjectId]);
 
     useEffect(() => {
-        const submitted = localStorage.getItem("submitted");
+        const submitted = localStorage.getItem(`submitted_${subjectId}`);
         if (submitted === "true") {
             setIsSubmitted(true);
         }
-    }, []);
+    }, [subjectId]);
 
     useEffect(() => {
-        const test = localStorage.getItem(`test_${subjectId}`);
-        if (test) navigate("/selectSubject");
+        const submitted = localStorage.getItem(`submitted_${subjectId}`);
+        if (submitted === "true") {
+            navigate("/selectSubject");
+        }
     }, [subjectId, navigate]);
 
     // const notValid = Object.keys(answers).length !== displayQuestions.length;
@@ -178,7 +176,7 @@ function ShowQuestions() {
         console.log("Submitted!", result);
 
         setIsSubmitted(true);
-        localStorage.setItem("submitted", "true");
+        localStorage.setItem(`submitted_${subjectId}`, "true");
         setIsRunning(false);
         if (dialogRef.current) {
             dialogRef.current.showModal();
@@ -204,15 +202,16 @@ function ShowQuestions() {
 
     const handleDialogClose = () => {
         setIsDialogRunning(false);
-        localStorage.setItem("remainingTime", dialogTimeLeft);
+
+        const finalTime = dialogTimeLeft > 0 ? dialogTimeLeft : 0;
+        localStorage.setItem(`remainingTime_${subjectId}`, finalTime);
+        localStorage.setItem("selectedSubjectId", subjectId);
         dialogRef.current.close();
 
         navigate(`/thank-you/${subjectId}`, {
             state: { remainingTime: dialogTimeLeft }
         });
     };
-
-
 
     return (
         <>
@@ -226,7 +225,8 @@ function ShowQuestions() {
                 </div>
 
                 <div className="nav-right">
-                    {displayQuestions.length > 0 ? <button onClick={handleSubmit} disabled={isSubmitted}>{isSubmitted ? "Submitted" : "Submit"}</button>
+                    {displayQuestions.length > 0 ? <button onClick={handleSubmit} disabled={isSubmitted}>{localStorage.getItem(`submitted_${subjectId}`)
+                        ? "Submitted" : "Submit"}</button>
                         : <p>Logged as: {userName} </p>}
                 </div>
             </nav>
@@ -266,13 +266,13 @@ function ShowQuestions() {
             <br />
 
             <div className="show-next">
-                {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === 7}>Next</button>}
+                {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === displayQuestions.length - 1}>Next</button>}
             </div>
 
             {displayQuestions.length > 0 ? "" : <button onClick={() => navigate("/selectSubject")}>Back</button>}
 
             <dialog ref={dialogRef} className="dialog-box">
-                <p>Result in: {formatTime(dialogTimeLeft)} minutes</p>
+                <p>Result in: {formatTime(dialogTimeLeft)}</p>
 
                 <button onClick={handleDialogClose}>
                     Close
@@ -280,7 +280,6 @@ function ShowQuestions() {
             </dialog>
         </>
     )
-
 }
 
 export default ShowQuestions;

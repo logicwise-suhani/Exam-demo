@@ -12,6 +12,7 @@ import Preview from "./components/Preview";
 import SelectSubject from "./components/SelectSubject";
 import SavedQuestions from "./components/ShowQuestions";
 import ThankYou from "./components/ThankYou";
+import Result from "./components/Result";
 
 function App() {
   const navigate = useNavigate();
@@ -55,6 +56,8 @@ function App() {
         <Route path="/showQues/:subjectId" element={<SavedQuestions />} />
 
         <Route path="/thank-you/:subjectId" element={<ThankYou />} />
+
+        <Route path="/result" element={<Result />} />
 
         <Route
           path="/createSubject"
