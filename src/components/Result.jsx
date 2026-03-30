@@ -9,7 +9,7 @@ function Result() {
     const navigate = useNavigate();
     const [timeLeft, setTimeLeft] = useState(0);
     const [displaySubjects, setDisplaySubjects] = useState([]);
-
+    const [name, setName] = useState("");
     const [selected, setSelected] = useState(() => {
         return localStorage.getItem("selectedSubjectId") || "";
     });
@@ -52,6 +52,19 @@ function Result() {
         const parsed = JSON.parse(subject);
         setDisplaySubjects(parsed);
     }, []);
+
+    useEffect(() => {
+        const subjects = localStorage.getItem("subjects");
+        if (subjects) {
+            const parsedSubjects = JSON.parse(subjects);
+            const currentSubject = parsedSubjects.find(sub => sub.id === selected - 0);
+            if (currentSubject) {
+                setName(currentSubject.subject);
+            } else {
+                setName("");
+            }
+        }
+    }, [selected]);
 
     const handleResult = () => {
 
@@ -129,6 +142,7 @@ function Result() {
             <button onClick={() => navigate(-1)}>Back</button>
 
             <dialog ref={dialogRef} className="score-dialog">
+                <p>Subject: {name} </p>
                 <p>Marks: {score} / 8 </p>
                 <p>Result: {score > 6 ? <span style={{ color: "green" }}>PASS</span> : <span style={{ color: "red" }}>FAIL</span>} </p>
 

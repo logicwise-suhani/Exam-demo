@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Register() {
@@ -39,6 +39,14 @@ function Register() {
         setTouched({ ...touched, [e.target.name]: true });
     };
 
+    // useEffect(() => {
+    //     const registeredUser = JSON.parse(localStorage.getItem("users"));
+    //     if (!registeredUser) {
+    //         localStorage.removeItem("user");
+    //         navigate("/login");
+    //     }
+    // }, [navigate]);
+
     const handleRegister = () => {
         const users = JSON.parse(localStorage.getItem("users")) || [];
 
@@ -68,9 +76,7 @@ function Register() {
 
         if (loggedUser) {
             navigate("/login");
-            console.log("Logged in as: ", loggedUser.email);
         }
-
     }
 
     return (
