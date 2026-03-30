@@ -67,10 +67,6 @@ li.correct::before {
   color: green;
 }
 
-.select-role {
-  text-align: center;
-}
-
 .create-exam {
   padding: 10px 10px;
   text-align: center;

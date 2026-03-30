@@ -13,6 +13,14 @@
   position: relative;
 }
 
+.heading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
 .select-role {
   background: linear-gradient(to right bottom,
       rgba(255, 255, 255, 0.3),
@@ -25,6 +33,7 @@
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .teach-login input {

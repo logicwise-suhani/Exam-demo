@@ -70,7 +70,7 @@ function ShowQuestions() {
             alert("Questionnaire is empty!");
             return;
         }
-        const shuffled = [...savedData].sort(() => 0.3 - Math.random());
+        const shuffled = [...savedData].sort(() => 0.5 - Math.random());
 
         const randomEight = shuffled.slice(0, 8);
 

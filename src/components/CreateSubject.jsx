@@ -14,6 +14,11 @@ function CreateSubject() {
         window.addEventListener('popstate', () => {
             window.history.pushState(null, document.title, window.location.href);
         });
+        return () => {
+            window.removeEventListener('popstate', () => {
+                window.history.pushState(null, document.title, window.location.href);
+            })
+        }
     }, [location]);
 
     useEffect(() => {

@@ -16,23 +16,25 @@ function Home() {
 
   return (
     <>
-      <div className="select-role">
-        <h2>Select your Role</h2>
-        <button
-          onClick={() =>
-            navigate("/teacher-login")
-          }
-        >
-          Teacher
-        </button>
-        <br /> <br />
-        <button
-          onClick={handleStudentClick}
-        >
-          Student
-        </button>
+      <div className="heading">
+        <h1>Welcome to Exam Demo!</h1>
+        <div className="select-role">
+          <h2>Select your Role</h2>
+          <button
+            onClick={() =>
+              navigate("/teacher-login")
+            }
+          >
+            Teacher
+          </button>
+          <br /> <br />
+          <button
+            onClick={handleStudentClick}
+          >
+            Student
+          </button>
+        </div>
       </div>
-
     </>
   )
 

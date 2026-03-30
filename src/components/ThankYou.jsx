@@ -12,6 +12,7 @@ function ThankYou() {
     return (
         <>
             <h3>Thank you for Giving exam!</h3>
+
             <br />
             <p onClick={() => navigate("/result")} style={{ color: "red", cursor: "pointer" }}>Click to show result</p>
 
