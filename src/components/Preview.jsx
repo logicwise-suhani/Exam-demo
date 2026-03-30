@@ -7,7 +7,7 @@ function Preview() {
     const [previewData, setPreviewData] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
-
+    const [subName, setSubjectName] = useState("");
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
@@ -15,14 +15,25 @@ function Preview() {
         if (storedData) {
             setPreviewData(JSON.parse(storedData));
         }
-        console.log(storedData);
+    }, [subjectId]);
+
+    useEffect(() => {
+        const storedData = localStorage.getItem("subjects");
+
+        if (storedData) {
+            const parsed = JSON.parse(storedData);
+            const subjectName = parsed.find((sub) => sub.id === Number(subjectId))
+
+            if (subjectName) {
+                setSubjectName(subjectName.subject)
+            }
+        }
     }, [subjectId]);
 
     useEffect(() => {
         if (location.state?.examData) {
             setPreviewData(location.state.examData);
         }
-
     }, [location.state]);
 
     const totalTime = previewData.reduce(
@@ -40,7 +51,6 @@ function Preview() {
         alert("Exam Saved Successfully!");
     };
 
-
     const handleEdit = () => {
         navigate(`/create-exam/${subjectId}`, {
             state: { examData: previewData }
@@ -55,12 +65,12 @@ function Preview() {
         navigate(`/create-exam/${subjectId}`)
     }
 
-
     return (
         <>
             <div className="preview-container">
                 <h2>Preview</h2>
-                {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)} mins</h3>}
+                <h3 style={{ color: "white" }}>{subName}</h3>
+                {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)}</h3>}
                 <div className={previewData.length === 0 ? "" : "preview"}>
                     {previewData.map((item, index) => (
                         <div key={index}>
@@ -71,7 +81,6 @@ function Preview() {
                                     {opt && <li className={item.correctAnswer === i ? "correct" : ""} style={{ listStyleType: "none" }}>{opt}</li>}
                                 </div>
                             ))}
-
                         </div>
                     ))}
                 </div >

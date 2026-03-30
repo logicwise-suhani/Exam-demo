@@ -6,7 +6,6 @@ const CreateExam = () => {
     const [quesNumber, setQuesNumber] = useState(1);
     const [ques, setQues] = useState("");
     const [options, setOptions] = useState(["", "", "", ""]);
-    const [show, setShow] = useState(true);
     const [questions, setQuestions] = useState([]);
     const [correctOption, setCorrectOption] = useState(null);
     const [timeSpent, setTimeSpent] = useState("");
@@ -207,7 +206,12 @@ const CreateExam = () => {
 
     return (
         <>
-            <h2 style={{ textAlign: "center" }}>SUBJECT: {`${subjectName}`}</h2>
+            <nav className="navbar">
+                <div className="nav-center">
+                    <h2>SUBJECT: {`${subjectName}`}</h2>
+                </div>
+            </nav>
+
             <br />
             <div className='create-exam'>
                 <label>Ques no: {quesNumber} </label> <br />
@@ -231,23 +235,19 @@ const CreateExam = () => {
                                 validate("correctOption", index);
                             }}
                         />
-                        {show ? (
-                            <input
-                                type="text"
-                                value={opt}
-                                placeholder={`Type Option ${index + 1}`}
-                                onChange={(e) => handleOptionsChange(index, e.target.value)}
-                                onBlur={(e) => {
-                                    validateOption(index, e.target.value);
+                        <input
+                            type="text"
+                            value={opt}
+                            placeholder={`Type Option ${index + 1}`}
+                            onChange={(e) => handleOptionsChange(index, e.target.value)}
+                            onBlur={(e) => {
+                                validateOption(index, e.target.value);
 
-                                    const updatedOptions = [...options];
-                                    updatedOptions[index] = e.target.value;
+                                const updatedOptions = [...options];
+                                updatedOptions[index] = e.target.value;
 
-                                }}
-                            />
-                        ) : (
-                            <span>{opt}</span>
-                        )}
+                            }}
+                        />
 
                         {errors[`option${index}`] && (
                             < p style={{ color: "red" }}>
@@ -281,9 +281,3 @@ const CreateExam = () => {
 }
 
 export default CreateExam;
-
-// if (updatedOptions.every(o => o.trim() !== "")) {
-//     setShow(false);
-// }
-
-{/* <button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Edit Options'}</button> {" "} */ }

@@ -87,39 +87,41 @@ function Login() {
     <div>
       <h2>Login</h2>
 
-      <input
-        placeholder="Enter email"
-        name="email"
-        value={data.email}
-        onChange={handleChange}
-        onBlur={handleBlur}
-      /> <br />
-      <span style={{ color: "red" }}>{touched.email && errors.email}</span>
+      <div className="login">
+        <input
+          placeholder="Enter email"
+          name="email"
+          value={data.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        /> <br />
+        <span style={{ color: "red" }}>{touched.email && errors.email}</span>
 
-      <br />
+        <br />
 
-      <input
-        type="password"
-        placeholder="Enter password"
-        name="password"
-        value={data.password}
-        onChange={handleChange}
-        onBlur={handleBlur}
-      /> <br />
-      <span style={{ color: "red" }}>{touched.password && errors.password}</span>
+        <input
+          type="password"
+          placeholder="Enter password"
+          name="password"
+          value={data.password}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        /> <br />
+        <span style={{ color: "red" }}>{touched.password && errors.password}</span>
 
-      <br />
+        <br />
 
-      {loginError && <p style={{ color: "red" }}>{loginError}</p>}
-      <br />
+        {loginError && <p style={{ color: "red" }}>{loginError}</p>}
+        <br />
 
-      <button onClick={() => navigate("/")}>Back</button> {" "}
+        <button onClick={() => navigate("/")}>Back</button> {" "}
 
-      <button onClick={handleLogin} disabled={!isValid}>
-        Login
-      </button> {" "}
+        <button onClick={handleLogin} disabled={!isValid}>
+          Login
+        </button> {" "}
 
-      <p>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
+        <p>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
+      </div>
     </div>
   );
 }

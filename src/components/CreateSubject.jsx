@@ -87,7 +87,6 @@ function CreateSubject() {
             setListSubject(reassign);
             localStorage.setItem("subjects", JSON.stringify(reassign));
             localStorage.removeItem(`exam_${id}`);
-
         }
     };
 
@@ -120,6 +119,10 @@ function CreateSubject() {
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
             </nav>
 
+            <div className="heading">
+                <h2>Welcome, Teacher!</h2>
+            </div>
+
             <div className="create-subject">
                 {show && (
                     <>
@@ -129,11 +132,11 @@ function CreateSubject() {
                             <p style={{ color: "red" }}>{error}</p>
                         )}
                     </>
-                )}  <br /> <br />
+                )}  {" "}
 
                 <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button>
                 <br /> <br />
-                < table border="1">
+                {listSubject.length > 0 ? < table border="1">
                     <thead>
                         <tr>
                             <td>ID</td>
@@ -158,17 +161,13 @@ function CreateSubject() {
                                             <td onClick={() => handleData(id)} style={{ cursor: "pointer", color: localStorage.getItem(`exam_${id}`) ? "yellowgreen" : "red" }}>Preview Data</td>
                                         </tr>
                                     )
-                                })
-                                : null
+                                }) : null
                         }
                     </tbody>
-                </table>
-
+                </table> : ""}
                 <br />
-
             </div >
         </>
-
     )
 }
 

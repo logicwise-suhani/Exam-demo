@@ -25,13 +25,13 @@ function Home() {
               navigate("/teacher-login")
             }
           >
-            Teacher
+            Create Quiz
           </button>
           <br /> <br />
           <button
             onClick={handleStudentClick}
           >
-            Student
+            Student: Give a Quiz
           </button>
         </div>
       </div>

@@ -62,15 +62,15 @@ function TeachLogin() {
 
   };
 
-  const alreadyLogged = () => {
-    const logged = localStorage.getItem("user");
+  // const alreadyLogged = () => {
+  //   const logged = localStorage.getItem("user");
 
-    if (logged) {
-      navigate("/createSubject");
-    } else {
-      alert("Please Login!")
-    }
-  }
+  //   if (logged) {
+  //     navigate("/createSubject");
+  //   } else {
+  //     alert("Please Login!")
+  //   }
+  // }
 
   const isTeachValid =
     Object.keys(errors).length === 0 &&
@@ -81,7 +81,7 @@ function TeachLogin() {
     <>
       <h2>Login</h2>
 
-      <div className="teach-login">
+      <div className="login">
         <input
           placeholder="Enter email"
           name="email"
@@ -116,7 +116,7 @@ function TeachLogin() {
           Login
         </button> {" "}
 
-        <p>Already logged in? <span onClick={alreadyLogged} style={{ color: "red", cursor: "pointer" }}>Click here</span> </p>
+        {/* <p>Already logged in? <span onClick={alreadyLogged} style={{ color: "red", cursor: "pointer" }}>Click here</span> </p> */}
       </div>
     </>
 
