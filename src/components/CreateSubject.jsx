@@ -126,15 +126,20 @@ function CreateSubject() {
             <div className="create-subject">
                 {show && (
                     <>
-                        <input placeholder="Enter Subject" value={addSubject} onChange={(e) => setAddSubject(e.target.value)}
+                        <input
+                            placeholder="Enter Subject"
+                            value={addSubject}
+                            onChange={(e) => setAddSubject(e.target.value)}
                         />
-                        {error && (
-                            <p style={{ color: "red" }}>{error}</p>
-                        )}
                     </>
-                )}  {" "}
+                )}{" "}
 
                 <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button>
+
+                {error && (
+                    <p style={{ color: "red" }}>{error}</p>
+                )}
+
                 <br /> <br />
                 {listSubject.length > 0 ? < table border="1">
                     <thead>
