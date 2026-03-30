@@ -12,6 +12,11 @@ function SelectSubject() {
         window.addEventListener('popstate', () => {
             window.history.pushState(null, document.title, window.location.href);
         });
+        return () => {
+            window.removeEventListener('popstate', () => {
+                window.history.pushState(null, document.title, window.location.href);
+            })
+        }
     }, [location]);
 
     useEffect(() => {
@@ -23,7 +28,6 @@ function SelectSubject() {
 
     useEffect(() => {
         const name = JSON.parse(localStorage.getItem("user")) || [];
-
         if (name) {
             setUserName(name.email)
         }

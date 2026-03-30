@@ -49,7 +49,6 @@ function App() {
         <Route path="/create-exam/:subjectId" element={
           <PrivateRoute allowedRoles={["teacher"]}>
             <CreateExam />
-            {/* <button onClick={handleLogOut} className="logout">LogOut</button> */}
           </PrivateRoute>} />
 
         <Route path="/preview/:subjectId" element={<Preview />} />
@@ -64,7 +63,6 @@ function App() {
           element={
             <PrivateRoute allowedRoles={["teacher"]}>
               <CreateSubject />
-              {/* <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button> */}
             </PrivateRoute>
           }
         />

@@ -1,18 +1,21 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useSubjectName } from "../hooks/SubjectName";
 
 const CreateExam = () => {
     const { subjectId } = useParams();
-    const [quesNumber, setQuesNumber] = useState(1);
-    const [ques, setQues] = useState("");
-    const [options, setOptions] = useState(["", "", "", ""]);
-    const [questions, setQuestions] = useState([]);
-    const [correctOption, setCorrectOption] = useState(null);
-    const [timeSpent, setTimeSpent] = useState("");
-    const [errors, setErrors] = useState({});
-    const [subjectName, setSubjectName] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
+    const subName = useSubjectName();
+    const [quesNumber, setQuesNumber] = useState(1);
+    const [form, setForm] = useState({
+        ques: "",
+        options: ["", "", "", ""],
+        correctOption: null,
+        timeSpent: ""
+    });
+    const [questions, setQuestions] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (location.state?.examData) {
@@ -23,10 +26,12 @@ const CreateExam = () => {
                 const last = data[data.length - 1];
 
                 setQuesNumber(data.length);
-                setQues(last.question);
-                setOptions(last.options);
-                setCorrectOption(last.correctAnswer);
-                setTimeSpent(last.timeTaken);
+                setForm({
+                    ques: last.question,
+                    options: last.options,
+                    correctOption: last.correctAnswer,
+                    timeSpent: last.timeTaken
+                });
             }
         }
     }, [location.state]);
@@ -37,29 +42,13 @@ const CreateExam = () => {
             const parsed = JSON.parse(savedData);
             setQuestions(parsed);
         }
-
-        const subjects = JSON.parse(localStorage.getItem("subjects")) || [];
-
-        const foundSubject = subjects.find(
-            (sub) => String(sub.id) === String(subjectId)
-        );
-
-        if (foundSubject) {
-            setSubjectName(foundSubject.subject);
-        }
     }, [subjectId]);
 
     const handleQuestionChange = (e) => {
         const value = e.target.value;
-        setQues(value);
+        updateForm("question", value);
         validate("question", value);
     };
-
-    const handleOptionsChange = (index, value) => {
-        const updatedOptions = [...options]
-        updatedOptions[index] = value;
-        setOptions(updatedOptions);
-    }
 
     const validate = useCallback((name, value) => {
         let error = "";
@@ -95,31 +84,60 @@ const CreateExam = () => {
         }));
     };
 
-    const isValid =
-        ques.trim() !== "" &&
-        correctOption !== null &&
-        options.every(opt => opt.trim() !== "") &&
-        timeSpent !== "";
+    const isValid = useMemo(() => {
+        form.ques.trim() !== "" &&
+            form.correctOption !== null &&
+            form.options.every(opt => opt.trim() !== "") &&
+            form.timeSpent !== "";
+    }, [form.ques, form.options, form.correctOption, form.timeSpent])
+
+    const saveQuestion = (list, index, question) => {
+        const updated = [...list];
+
+        if (updated[index]) {
+            updated[index] = question;
+        } else {
+            updated.push(question);
+        }
+        return updated;
+    };
+
+    const updateOption = (index, value) => {
+        const updated = [...form.options];
+        updated[index] = value;
+        updateForm("options", updated);
+    };
+
+    const updateForm = (field, value) => {
+        setForm(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const resetForm = () => {
+        setForm({
+            ques: "",
+            options: ["", "", "", ""],
+            correctOption: null,
+            timeSpent: ""
+        });
+    };
+
+    const buildQuestion = useCallback(() => ({
+        question: form.ques,
+        options: form.options,
+        correctAnswer: form.correctOption,
+        timeTaken: Number(form.timeSpent) || 0
+    }), [form.correctOption, form.ques, form.options, form.timeSpent]);
 
     const nextQuestion = useCallback(
         () => {
 
             if (!isValid) return;
 
-            const newQuestion = {
-                question: ques,
-                options: options,
-                correctAnswer: correctOption,
-                timeTaken: Number(timeSpent) || 0
-            };
-
-            const updatedQuestions = [...questions];
-
-            if (updatedQuestions[quesNumber - 1]) {
-                updatedQuestions[quesNumber - 1] = newQuestion;
-            } else {
-                updatedQuestions.push(newQuestion);
-            }
+            const newQuestion = buildQuestion();
+            const updatedQuestions = saveQuestion(questions, quesNumber - 1, newQuestion);
 
             setQuestions(updatedQuestions);
 
@@ -129,28 +147,25 @@ const CreateExam = () => {
             }
 
             const nextIndex = quesNumber;
-
             setQuesNumber(prev => prev + 1);
 
             if (updatedQuestions[nextIndex]) {
                 const nextQues = updatedQuestions[nextIndex];
 
-                setQues(nextQues.question);
-                setOptions(nextQues.options);
-                setCorrectOption(nextQues.correctAnswer);
-                setTimeSpent(nextQues.timeTaken);
+                setForm({
+                    ques: nextQues.question,
+                    options: nextQues.options,
+                    correctOption: nextQues.correctAnswer,
+                    timeSpent: nextQues.timeTaken
+                })
             }
 
             else {
-                setQues("");
-                setOptions(["", "", "", ""]);
-                setCorrectOption(null);
-                setTimeSpent("");
+                resetForm();
             }
             setErrors({});
 
-        }
-        , [correctOption, options, ques, timeSpent, isValid, quesNumber, questions])
+        }, [isValid, quesNumber, questions, buildQuestion])
 
     const handleBack = () => {
 
@@ -163,32 +178,21 @@ const CreateExam = () => {
         const prevQuestion = questions[prevIndex];
 
         if (!prevQuestion) return;
-
         setQuesNumber(prev => prev - 1);
 
-        setQues(prevQuestion.question);
-        setOptions(prevQuestion.options);
-        setCorrectOption(prevQuestion.correctAnswer);
-        setTimeSpent(prevQuestion.timeTaken);
+        setForm({
+            ques: prevQuestion.question,
+            options: prevQuestion.options,
+            correctOption: prevQuestion.correctAnswer,
+            timeSpent: prevQuestion.timeTaken
+        })
     };
 
     const previewQuestions = () => {
 
-        const lastQuestion = {
-            question: ques,
-            options: options,
-            correctAnswer: correctOption,
-            timeTaken: Number(timeSpent) || 0
-        };
+        const lastQuestion = buildQuestion();
 
-        const updatedQuestions = [...questions];
-
-        if (updatedQuestions[quesNumber - 1]) {
-            updatedQuestions[quesNumber - 1] = lastQuestion;
-        } else {
-            updatedQuestions.push(lastQuestion);
-        }
-
+        const updatedQuestions = saveQuestion(questions, quesNumber - 1, lastQuestion);
         setQuestions(updatedQuestions);
 
         navigate(`/preview/${subjectId}`, {
@@ -198,17 +202,14 @@ const CreateExam = () => {
 
     const handleKeyDown = (e) => {
         const invalid = ['e', 'E', '.', '+', '-'];
-
-        if (invalid.includes(e.key)) {
-            e.preventDefault();
-        }
+        if (invalid.includes(e.key)) e.preventDefault();
     }
 
     return (
         <>
             <nav className="navbar">
                 <div className="nav-center">
-                    <h2>SUBJECT: {`${subjectName}`}</h2>
+                    <h2>SUBJECT: {subName}</h2>
                 </div>
             </nav>
 
@@ -216,7 +217,7 @@ const CreateExam = () => {
             <div className='create-exam'>
                 <label>Ques no: {quesNumber} </label> <br />
                 <textarea
-                    value={ques}
+                    value={form.ques}
                     onChange={handleQuestionChange}
                     placeholder='Type Question'
                     onBlur={(e) => validate("question", e.target.value)}
@@ -224,14 +225,14 @@ const CreateExam = () => {
                 {errors.question && <p style={{ color: "red" }}>{errors.question}</p>}
 
                 <h3>Options</h3>
-                {options.map((opt, index) => (
+                {form.options.map((opt, index) => (
                     <div key={index} className='radio-btn'>
                         <input
                             type='radio'
                             value={index}
-                            checked={correctOption === index}
+                            checked={form.correctOption === index}
                             onChange={() => {
-                                setCorrectOption(index);
+                                updateForm("correctOption", index)
                                 validate("correctOption", index);
                             }}
                         />
@@ -239,14 +240,8 @@ const CreateExam = () => {
                             type="text"
                             value={opt}
                             placeholder={`Type Option ${index + 1}`}
-                            onChange={(e) => handleOptionsChange(index, e.target.value)}
-                            onBlur={(e) => {
-                                validateOption(index, e.target.value);
-
-                                const updatedOptions = [...options];
-                                updatedOptions[index] = e.target.value;
-
-                            }}
+                            onChange={(e) => updateOption(index, e.target.value)}
+                            onBlur={(e) => validateOption(index, e.target.value)}
                         />
 
                         {errors[`option${index}`] && (
@@ -256,6 +251,7 @@ const CreateExam = () => {
                         )}
                     </div>
                 ))}
+
                 {errors.correctOption && <p style={{ color: "red" }}>{errors.correctOption}</p>}
                 < br />
                 Time Required: {" "}
@@ -263,12 +259,14 @@ const CreateExam = () => {
                     style={{ width: "40px" }}
                     type='number'
                     min="0"
-                    value={timeSpent}
-                    onChange={(e) => setTimeSpent(e.target.value)}
+                    value={form.timeSpent}
+                    onChange={(e) => updateForm("timeSpent", e.target.value)}
                     onBlur={(e) => validate("timeSpent", e.target.value)}
                     onKeyDown={handleKeyDown}
                 /> secs
+
                 {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
+
                 <br /> <br />
             </div >
             <div className='exam-btn'>

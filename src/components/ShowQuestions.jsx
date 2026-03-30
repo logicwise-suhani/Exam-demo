@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
+import { useSubjectName } from "../hooks/SubjectName";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
@@ -11,7 +12,7 @@ function ShowQuestions() {
     const [isRunning, setIsRunning] = useState(false);
     const [show, setShow] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
-    const [subjectName, setSubjectName] = useState("");
+    const subName = useSubjectName();
     const [userName, setUserName] = useState("");
     const [answers, setAnswers] = useState({});
     const [error, setError] = useState('');
@@ -31,25 +32,13 @@ function ShowQuestions() {
     }, [subjectId]);
 
     useEffect(() => {
-        const subjects = JSON.parse(localStorage.getItem("subjects")) || [];
-
-        const foundSubject = subjects.find(
-            (sub) => String(sub.id) === String(subjectId)
-        );
-
-        if (foundSubject) {
-            setSubjectName(foundSubject.subject);
-        }
-    }, [subjectId]);
-
-    useEffect(() => {
         const name = JSON.parse(localStorage.getItem("user")) || [];
 
         if (name) {
             setUserName(name.email)
         }
     }, []);
-
+ 
     useEffect(() => {
         if (!show) return;
 
@@ -221,7 +210,7 @@ function ShowQuestions() {
                 </div>
 
                 <div className="nav-center">
-                    <h2>{subjectName} <br /> <span style={{ fontSize: "20px" }}>{`Subject ID is : ${subjectId}`}</span> </h2>
+                    <h2>{subName} <br /> <span style={{ fontSize: "20px" }}>{`Subject ID is : ${subjectId}`}</span> </h2>
                 </div>
 
                 <div className="nav-right">

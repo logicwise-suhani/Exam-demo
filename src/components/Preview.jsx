@@ -1,32 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
+import { useSubjectName } from "../hooks/SubjectName";
 
 function Preview() {
     const { subjectId } = useParams();
     const [previewData, setPreviewData] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
-    const [subName, setSubjectName] = useState("");
+    const subName = useSubjectName();
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
 
         if (storedData) {
             setPreviewData(JSON.parse(storedData));
-        }
-    }, [subjectId]);
-
-    useEffect(() => {
-        const storedData = localStorage.getItem("subjects");
-
-        if (storedData) {
-            const parsed = JSON.parse(storedData);
-            const subjectName = parsed.find((sub) => sub.id === Number(subjectId))
-
-            if (subjectName) {
-                setSubjectName(subjectName.subject)
-            }
         }
     }, [subjectId]);
 
