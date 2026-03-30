@@ -6,14 +6,13 @@ function Result() {
     const { subjectId } = useParams();
     const [score, setScore] = useState(0);
     const dialogRef = useRef();
-
+    const navigate = useNavigate();
     const [timeLeft, setTimeLeft] = useState(0);
     const [displaySubjects, setDisplaySubjects] = useState([]);
 
     const [selected, setSelected] = useState(() => {
         return localStorage.getItem("selectedSubjectId") || "";
     });
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (selected) {
@@ -67,8 +66,7 @@ function Result() {
             alert("No result found for this subject");
             return;
         }
-        // navigate(`/thank-you/${selected}`);
-        const testId = localStorage.getItem(`test_${subjectId}`);
+        const testId = localStorage.getItem(`test_${selected}`);
         const resArray = JSON.parse(testId);
         let totalScore = 0;
 
@@ -87,7 +85,6 @@ function Result() {
     const handleSelected = (e) => {
         setSelected(e.target.value);
     }
-    const hasResult = selected && localStorage.getItem(`test_${selected}`);
 
     const handleDialog = () => {
         handleResult();
@@ -102,6 +99,8 @@ function Result() {
         }
         dialogRef.current.close();
     };
+
+    const hasResult = selected && localStorage.getItem(`test_${selected}`);
 
     return (
         <>

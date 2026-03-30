@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-// import { formatTime } from "../utils/timeFormatter";
 
 function SelectSubject() {
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
     const [userName, setUserName] = useState("");
-    // const [timeLeft, setTimeLeft] = useState(() => {
-    //     const saved = localStorage.getItem("remainingTime");
-    //     return saved ? Number(saved) : 0;
-    // });
     const location = useLocation();
 
     useEffect(() => {
@@ -18,22 +13,6 @@ function SelectSubject() {
             window.history.pushState(null, document.title, window.location.href);
         });
     }, [location]);
-
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         setTimeLeft(prev => {
-    //             if (prev <= 1) {
-    //                 localStorage.setItem("remainingTime", 0);
-    //                 return 0;
-    //             }
-    //             const updated = prev - 1;
-    //             localStorage.setItem("remainingTime", updated);
-    //             return updated > 0 ? updated : 0;
-    //         });
-    //     }, 1000);
-
-    //     return () => clearInterval(interval);
-    // }, []);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
@@ -69,7 +48,7 @@ function SelectSubject() {
     return (
         <>
             <nav className="navbar">
-                <p onClick={() => navigate("/result")} style={{ color: "white", cursor: "pointer" }}>View Result</p>
+                <button onClick={() => navigate("/result")} style={{ cursor: "pointer" }}>Result</button>
 
                 <p>Logged as: {userName}</p>
                 <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
@@ -87,14 +66,3 @@ function SelectSubject() {
 }
 
 export default SelectSubject;
-
-
-
-
-
-
-
-{/* <button onClick={() => {
-    const id = localStorage.getItem("currentSubjectId");
-    navigate(`/thank-you/${id}`);
-}} style={{ color: "black" }}>View Result</button> */}
