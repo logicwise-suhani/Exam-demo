@@ -76,7 +76,6 @@ function CreateSubject() {
         localStorage.setItem("subjects", JSON.stringify(updatedList))
         setAddSubject("")
         setShow(false);
-
     }
 
     const handleDelete = (id) => {
@@ -170,7 +169,6 @@ function CreateSubject() {
                         }
                     </tbody>
                 </table> : ""}
-                <br />
             </div >
         </>
     )

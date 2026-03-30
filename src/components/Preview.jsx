@@ -5,10 +5,10 @@ import { useSubjectName } from "../hooks/SubjectName";
 
 function Preview() {
     const { subjectId } = useParams();
-    const [previewData, setPreviewData] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
     const subName = useSubjectName();
+    const [previewData, setPreviewData] = useState([]);
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
@@ -25,16 +25,14 @@ function Preview() {
     }, [location.state]);
 
     const totalTime = previewData.reduce(
-        (acc, item) => acc + Number(item.timeTaken || 0),
-        0
-    );
+        (acc, item) => acc + Number(item.timeTaken || 0), 0);
 
     const handleSave = () => {
         if (!previewData || (Array.isArray(previewData) && previewData.length === 0)) {
             alert("Empty Test can't be submitted!");
             return;
         }
-
+        
         localStorage.setItem(`exam_${subjectId}`, JSON.stringify(previewData));
         alert("Exam Saved Successfully!");
     };

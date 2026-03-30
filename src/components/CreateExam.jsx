@@ -39,8 +39,7 @@ const CreateExam = () => {
     useEffect(() => {
         const savedData = localStorage.getItem(`exam_${subjectId}`);
         if (savedData) {
-            const parsed = JSON.parse(savedData);
-            setQuestions(parsed);
+            setQuestions(JSON.parse(savedData));
         }
     }, [subjectId]);
 
