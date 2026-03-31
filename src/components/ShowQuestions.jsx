@@ -1,42 +1,32 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
-import { useSubjectName } from "../hooks/SubjectName";
+import { useSubjectName } from "../hooks/useSubjectName";
+import { useTimer } from "../hooks/useTimer";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
     const navigate = useNavigate();
     const dialogRef = useRef();
     const subName = useSubjectName();
+    const [error, setError] = useState('');
     const [savedData, setSavedData] = useState([]);
     const [displayQuestions, setDisplayQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [show, setShow] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
-    const [userName, setUserName] = useState("");
     const [answers, setAnswers] = useState({});
-    const [error, setError] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
     const [dialogTimeLeft, setDialogTimeLeft] = useState(0);
     const [isDialogRunning, setIsDialogRunning] = useState(false);
 
+    const userName = JSON.parse(localStorage.getItem("user"))?.email || [];
+    const isSubmitted = localStorage.getItem(`submitted_${subjectId}`) === "true";
+
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
-
-        if (storedData) {
-            setSavedData(JSON.parse(storedData));
-        }
-
+        setSavedData(storedData ? JSON.parse(storedData) : []);
     }, [subjectId]);
-
-    useEffect(() => {
-        const name = JSON.parse(localStorage.getItem("user")) || [];
-
-        if (name) {
-            setUserName(name.email)
-        }
-    }, []);
 
     useEffect(() => {
         if (!show) return;
@@ -50,7 +40,6 @@ function ShowQuestions() {
         };
 
         localStorage.setItem(`exam_state_${subjectId}`, JSON.stringify(examState));
-
     }, [displayQuestions, currentIndex, timeLeft, answers, isRunning, show, subjectId]);
 
     const generateQuestions = () => {
@@ -80,15 +69,25 @@ function ShowQuestions() {
             }));
         }, [answers, displayQuestions])
 
-    useEffect(() => {
-        if (!isRunning) return;
+    useTimer(isRunning, () => { setTimeLeft(prev => prev - 1) })
+    useTimer(isDialogRunning, () => {
+        if (dialogTimeLeft <= 0) {
+            setIsDialogRunning(false);
+            navigate(`/thank-you/${subjectId}`);
+            return;
+        }
+        setDialogTimeLeft(prev => prev - 1)
+    })
 
-        const interval = setInterval(() => {
-            setTimeLeft(prev => prev - 1);
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [isRunning]);
+    const submit = useCallback(() => {
+        const result = getResult();
+        localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
+        localStorage.setItem(`submitted_${subjectId}`, "true");
+        dialogRef.current?.showModal();
+        setDialogTimeLeft(300);
+        setIsDialogRunning(true);
+        setIsRunning(false);
+    }, [getResult, subjectId])
 
     useEffect(() => {
         if (!isRunning) return;
@@ -97,47 +96,14 @@ function ShowQuestions() {
             const nextIndex = currentIndex + 1;
 
             if (nextIndex >= displayQuestions.length) {
-                setIsRunning(false);
-
-                const result = getResult();
-                localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
-                localStorage.setItem(`submitted_${subjectId}`, "true");
-
-                setIsSubmitted(true);
-
-                dialogRef.current?.showModal();
-                setDialogTimeLeft(300);
-                setIsDialogRunning(true);
+                submit();
                 return;
             }
 
             setCurrentIndex(nextIndex);
             setTimeLeft(displayQuestions[nextIndex].timeTaken);
         }
-    }, [timeLeft, isRunning, currentIndex, displayQuestions, getResult, subjectId]);
-
-    useEffect(() => {
-        if (!isDialogRunning) return;
-
-        if (dialogTimeLeft <= 0) {
-            setIsDialogRunning(false);
-            navigate(`/thank-you/${subjectId}`);
-            return;
-        }
-
-        const interval = setInterval(() => {
-            setDialogTimeLeft(prev => prev - 1);
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [isDialogRunning, dialogTimeLeft, navigate, subjectId]);
-
-    useEffect(() => {
-        const submitted = localStorage.getItem(`submitted_${subjectId}`);
-        if (submitted === "true") {
-            setIsSubmitted(true);
-        }
-    }, [subjectId]);
+    }, [timeLeft, isRunning, currentIndex, displayQuestions, getResult, subjectId, submit]);
 
     useEffect(() => {
         const submitted = localStorage.getItem(`submitted_${subjectId}`);
@@ -146,31 +112,13 @@ function ShowQuestions() {
         }
     }, [subjectId, navigate]);
 
-    // const notValid = Object.keys(answers).length !== displayQuestions.length;
-
     const handleSubmit = () => {
-        // if (notValid) {
-        //     alert("Please answer all questions before submitting!");
-        //     return;
-        // }
         if (isSubmitted) return;
 
         const confirmSubmit = confirm("Are you sure want to Submit?");
         if (!confirmSubmit) return;
 
-        const result = getResult();
-
-        localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
-        console.log("Submitted!", result);
-
-        setIsSubmitted(true);
-        localStorage.setItem(`submitted_${subjectId}`, "true");
-        setIsRunning(false);
-        if (dialogRef.current) {
-            dialogRef.current.showModal();
-            setDialogTimeLeft(300);
-            setIsDialogRunning(true);
-        }
+        submit();
     };
 
     const handleNext = () => {
@@ -204,6 +152,7 @@ function ShowQuestions() {
     return (
         <>
             <nav className="navbar-ques">
+
                 <div className="nav-left"> {!show ? <button onClick={generateQuestions}>Start Exam</button>
                     : displayQuestions.length > 0 && <p >Time left is : <span style={{ color: timeLeft < 10 ? "red" : "" }}>{formatTime(timeLeft)}</span> </p>} {" "}
                 </div>
@@ -227,9 +176,7 @@ function ShowQuestions() {
 
             {displayQuestions.length > 0 && (
                 <div className="display-ques">
-                    <h4>
-                        {currentIndex + 1}. {displayQuestions[currentIndex].question}
-                    </h4>
+                    <h4>{currentIndex + 1}. {displayQuestions[currentIndex].question}</h4>
 
                     {displayQuestions[currentIndex].options.map((opt, i) => (
                         <div key={i}>
@@ -261,7 +208,6 @@ function ShowQuestions() {
 
             <dialog ref={dialogRef} className="dialog-box">
                 <p>Result in: {formatTime(dialogTimeLeft)}</p>
-
                 <button onClick={handleDialogClose}>
                     Close
                 </button>
@@ -277,4 +223,9 @@ export default ShowQuestions;
 
 
 
-{/* <label style={{ color: displayQuestions[currentIndex].correctAnswer === i ? "green" : "white" }}>{opt}</label> */ }
+
+// const notValid = Object.keys(answers).length !== displayQuestions.length;
+// if (notValid) {
+//     alert("Please answer all questions before submitting!");
+//     return;
+// }

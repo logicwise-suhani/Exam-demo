@@ -20,25 +20,13 @@ function Home() {
         <h1>Welcome to Exam Demo!</h1>
         <div className="select-role">
           <h2>Select your Role</h2>
-          <button
-            onClick={() =>
-              navigate("/teacher-login")
-            } 
-          >
-            Create Quiz
-          </button>
+          <button onClick={() => navigate("/teacher-login")} >Create Quiz </button>
           <br /> <br />
-          <button
-            onClick={handleStudentClick}
-          >
-            Student: Give a Quiz
-          </button>
+          <button onClick={handleStudentClick}>Student: Give a Quiz</button>
         </div>
       </div>
     </>
   )
-
-
 }
 
 export default Home;

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useSubjectName } from "../hooks/SubjectName";
+import { useSubjectName } from "../hooks/useSubjectName";
 
 const CreateExam = () => {
     const { subjectId } = useParams();
@@ -45,7 +45,7 @@ const CreateExam = () => {
 
     const handleQuestionChange = (e) => {
         const value = e.target.value;
-        updateForm("question", value);
+        updateForm("ques", value);
         validate("question", value);
     };
 
@@ -84,10 +84,11 @@ const CreateExam = () => {
     };
 
     const isValid = useMemo(() => {
-        form.ques.trim() !== "" &&
+        return (form.ques.trim() !== "" &&
             form.correctOption !== null &&
             form.options.every(opt => opt.trim() !== "") &&
-            form.timeSpent !== "";
+            form.timeSpent !== ""
+        );
     }, [form.ques, form.options, form.correctOption, form.timeSpent])
 
     const saveQuestion = (list, index, question) => {

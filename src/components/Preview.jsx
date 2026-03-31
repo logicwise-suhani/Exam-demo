@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
-import { useSubjectName } from "../hooks/SubjectName";
+import { useSubjectName } from "../hooks/useSubjectName";
 
 function Preview() {
     const { subjectId } = useParams();
@@ -32,7 +32,7 @@ function Preview() {
             alert("Empty Test can't be submitted!");
             return;
         }
-        
+
         localStorage.setItem(`exam_${subjectId}`, JSON.stringify(previewData));
         alert("Exam Saved Successfully!");
     };
