@@ -7,7 +7,7 @@ import { useTimer } from "../hooks/useTimer";
 function Result() {
     const { subjectId } = useParams();
     const dialogRef = useRef();
-    const navigate = useNavigate();
+    const navigate = useNavigate(); 
     const [score, setScore] = useState(0);
     const [timeLeft, setTimeLeft] = useState(0);
     const [displaySubjects, setDisplaySubjects] = useState([]);

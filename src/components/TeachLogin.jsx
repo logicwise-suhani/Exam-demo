@@ -8,7 +8,6 @@ function TeachLogin() {
     email: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
@@ -92,7 +91,6 @@ function TeachLogin() {
         <span>{touched.email && errors.email}</span>
 
         <br /> <br />
-
         <input
           type="password"
           placeholder="Enter password"
@@ -104,7 +102,6 @@ function TeachLogin() {
         <span>{touched.password && errors.password}</span>
 
         <br />
-
         {loginError && (
           <p style={{ color: "red" }}>{loginError}</p>
         )}

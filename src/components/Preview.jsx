@@ -15,7 +15,7 @@ function Preview() {
 
         if (storedData) {
             setPreviewData(JSON.parse(storedData));
-        }
+        } 
     }, [subjectId]);
 
     useEffect(() => {

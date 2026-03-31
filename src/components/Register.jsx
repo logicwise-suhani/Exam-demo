@@ -85,7 +85,6 @@ function Register() {
             <span>{touched.email && errors.email}</span>
 
             <br />
-
             <input
                 type="password"
                 name="password"
@@ -97,10 +96,10 @@ function Register() {
             <span>{touched.password && errors.password}</span>
 
             <br /> <br />
-
             <button onClick={handleRegister} disabled={!isValid}>
                 Register
             </button>
+            
             <br /> <br />
             <p>Already registered? <span onClick={alreadyRegistered} style={{ cursor: "pointer", color: "red" }}>Please Login</span></p>
         </div>

@@ -91,7 +91,7 @@ const CreateExam = () => {
         );
     }, [form.ques, form.options, form.correctOption, form.timeSpent])
 
-    const saveQuestion = (list, index, question) => {
+    const saveQuestion = useCallback((list, index, question) => {
         const updated = [...list];
 
         if (updated[index]) {
@@ -100,7 +100,7 @@ const CreateExam = () => {
             updated.push(question);
         }
         return updated;
-    };
+    }, []);
 
     const updateOption = (index, value) => {
         const updated = [...form.options];
@@ -157,15 +157,14 @@ const CreateExam = () => {
                     options: nextQues.options,
                     correctOption: nextQues.correctAnswer,
                     timeSpent: nextQues.timeTaken
-                })
+                });
             }
-
             else {
                 resetForm();
             }
             setErrors({});
 
-        }, [isValid, quesNumber, questions, buildQuestion])
+        }, [isValid, quesNumber, questions, buildQuestion, saveQuestion])
 
     const handleBack = () => {
 

@@ -80,8 +80,7 @@ function Login() {
 
   const isValid =
     Object.keys(errors).length === 0 &&
-    data.email &&
-    data.password;
+    data.email && data.password;
 
   return (
     <div>
@@ -98,7 +97,6 @@ function Login() {
         <span style={{ color: "red" }}>{touched.email && errors.email}</span>
 
         <br />
-
         <input
           type="password"
           placeholder="Enter password"
@@ -106,19 +104,17 @@ function Login() {
           value={data.password}
           onChange={handleChange}
           onBlur={handleBlur}
-        /> <br />
+        />
+        <br />
         <span style={{ color: "red" }}>{touched.password && errors.password}</span>
 
         <br />
-
         {loginError && <p style={{ color: "red" }}>{loginError}</p>}
-        <br />
 
+        <br />
         <button onClick={() => navigate("/")}>Back</button> {" "}
 
-        <button onClick={handleLogin} disabled={!isValid}>
-          Login
-        </button> {" "}
+        <button onClick={handleLogin} disabled={!isValid}> Login</button> {" "}
 
         <p>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
       </div>

@@ -148,7 +148,7 @@ function CreateSubject() {
                             <td colSpan="3" style={{ textAlign: "center" }}>Action</td>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody> 
                         {
                             listSubject.length ?
                                 listSubject?.map(({ id, subject }, index) => {

@@ -21,6 +21,7 @@ function Home() {
         <div className="select-role">
           <h2>Select your Role</h2>
           <button onClick={() => navigate("/teacher-login")} >Create Quiz </button>
+          
           <br /> <br />
           <button onClick={handleStudentClick}>Student: Give a Quiz</button>
         </div>
@@ -30,44 +31,3 @@ function Home() {
 }
 
 export default Home;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import StudentCard from "./StudentCard";
-// import TeacherCard from "./TeacherCard";
-
-// function Home() {
-//   return (
-//     <div>
-//       <TeacherCard />
-//       <StudentCard />
-//     </div>
-//   );
-// }
-
-// export default Home;
