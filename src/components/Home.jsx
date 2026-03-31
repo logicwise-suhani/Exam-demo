@@ -23,7 +23,7 @@ function Home() {
           <button
             onClick={() =>
               navigate("/teacher-login")
-            }
+            } 
           >
             Create Quiz
           </button>

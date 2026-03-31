@@ -5,22 +5,21 @@ import { useSubjectName } from "../hooks/SubjectName";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
-
+    const navigate = useNavigate();
+    const dialogRef = useRef();
+    const subName = useSubjectName();
     const [savedData, setSavedData] = useState([]);
     const [displayQuestions, setDisplayQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [show, setShow] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
-    const subName = useSubjectName();
     const [userName, setUserName] = useState("");
     const [answers, setAnswers] = useState({});
     const [error, setError] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [dialogTimeLeft, setDialogTimeLeft] = useState(0);
     const [isDialogRunning, setIsDialogRunning] = useState(false);
-    const navigate = useNavigate();
-    const dialogRef = useRef();
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
@@ -38,7 +37,7 @@ function ShowQuestions() {
             setUserName(name.email)
         }
     }, []);
- 
+
     useEffect(() => {
         if (!show) return;
 
