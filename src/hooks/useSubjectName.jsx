@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 
-export function useSubjectName() {
-    const { subjectId } = useParams();
+export function useSubjectName(id) {
+    const params = useParams();
+    const subjectId = id ?? params.subjectId;
 
     const subjects = JSON.parse(localStorage.getItem("subjects")) || [];
 

@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { formatTime } from "../utils/timeFormatter";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSubjectName } from "../hooks/useSubjectName";
+import { useTimer } from "../hooks/useTimer";
 
 function Result() {
     const { subjectId } = useParams();
-    const [score, setScore] = useState(0);
     const dialogRef = useRef();
     const navigate = useNavigate();
+    const [score, setScore] = useState(0);
     const [timeLeft, setTimeLeft] = useState(0);
     const [displaySubjects, setDisplaySubjects] = useState([]);
-    const [name, setName] = useState("");
     const [selected, setSelected] = useState(() => {
         return localStorage.getItem("selectedSubjectId") || "";
     });
+    const subName = useSubjectName(selected);
 
     useEffect(() => {
         if (selected) {
@@ -29,45 +31,24 @@ function Result() {
         }
     }, [selected]);
 
-    useEffect(() => {
-        if (!selected) return;
-
-        const interval = setInterval(() => {
-            setTimeLeft(prev => {
-                if (prev <= 1) {
-                    localStorage.setItem(`remainingTime_${selected}`, 0);
-                    return 0;
-                }
-                const updated = prev - 1;
-                localStorage.setItem(`remainingTime_${selected}`, updated);
-                return updated > 0 ? updated : 0;
-            });
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [selected]);
+    useTimer(selected, () => {
+        setTimeLeft(prev => {
+            if (prev <= 1) {
+                localStorage.setItem(`remainingTime_${selected}`, 0);
+                return 0;
+            }
+            const updated = prev - 1;
+            localStorage.setItem(`remainingTime_${selected}`, updated);
+            return updated > 0 ? updated : 0;
+        });
+    })
 
     useEffect(() => {
         const subject = localStorage.getItem("subjects");
-        const parsed = JSON.parse(subject);
-        setDisplaySubjects(parsed);
+        setDisplaySubjects(subject ? JSON.parse(subject) : "");
     }, []);
 
-    useEffect(() => {
-        const subjects = localStorage.getItem("subjects");
-        if (subjects) {
-            const parsedSubjects = JSON.parse(subjects);
-            const currentSubject = parsedSubjects.find(sub => sub.id === selected - 0);
-            if (currentSubject) {
-                setName(currentSubject.subject);
-            } else {
-                setName("");
-            }
-        }
-    }, [selected]);
-
     const handleResult = () => {
-
         if (!selected) {
             alert("Please select subject");
             return;
@@ -92,12 +73,8 @@ function Result() {
             }
         });
 
-        setScore(totalScore)
+        setScore(totalScore);
     };
-
-    const handleSelected = (e) => {
-        setSelected(e.target.value);
-    }
 
     const handleDialog = () => {
         handleResult();
@@ -123,8 +100,7 @@ function Result() {
                 </nav>
             </nav>
 
-            <select value={selected} onChange={handleSelected} style={{ padding: "5px", fontSize: "14px" }}>
-                <option value="">Select</option>
+            <select value={selected} onChange={(e) => setSelected(e.target.value)} style={{ padding: "5px", fontSize: "14px" }}>
                 {displaySubjects.map((item, index) => (
                     <option key={index} value={item.id}>{item.subject}</option>
                 ))}
@@ -142,13 +118,10 @@ function Result() {
             <button onClick={() => navigate(-1)}>Back</button>
 
             <dialog ref={dialogRef} className="score-dialog">
-                <p>Subject: {name} </p>
+                <p>Subject: {subName} </p>
                 <p>Marks: {score} / 8 </p>
                 <p>Result: {score > 6 ? <span style={{ color: "green" }}>PASS</span> : <span style={{ color: "red" }}>FAIL</span>} </p>
-
-                <button onClick={handleClose}>
-                    Close
-                </button>
+                <button onClick={handleClose}>Close</button>
             </dialog>
         </>
     )
