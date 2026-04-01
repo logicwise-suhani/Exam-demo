@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
+import Buttons from "./Button/Buttons";
 
 function Preview() {
     const { subjectId } = useParams();
@@ -75,9 +76,9 @@ function Preview() {
                     <button onClick={() => navigate("/createSubject")}>Home</button> {" "}
                     {previewData.length === 0 ? "" :
                         <>
-                            <button onClick={handleSave}>Submit Test</button> {" "}
-                            <button onClick={handleEdit}>Edit Test</button> {" "}
-                            <button onClick={handleDelete}>Delete Test</button>
+                            <Buttons onClick={handleSave} label="Submit Test" /> {" "}
+                            <Buttons onClick={handleEdit} label="Edit Test" /> {" "}
+                            <Buttons onClick={handleDelete} label="Delete Test" />
                         </>
                     }
                 </div>

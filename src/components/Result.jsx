@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { formatTime } from "../utils/timeFormatter";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSubjectName } from "../hooks/useSubjectName";
+import Buttons from "./Button/Buttons";
 import { useTimer } from "../hooks/useTimer";
 
 function Result() {
@@ -21,24 +22,16 @@ function Result() {
         }
     }, [selected]);
 
-    useEffect(() => {
-        if (selected) {
-            const saved = localStorage.getItem(`remainingTime_${selected}`);
-            setTimeLeft(saved ? Number(saved) : 0);
-        }
-    }, [selected]);
-
     useTimer(selected, () => {
-        setTimeLeft((prev) => {
-            if (prev <= 1) {
-                localStorage.setItem(`remainingTime_${selected}`, 0);
-                return 0;
-            }
-            const updated = prev - 1;
-            localStorage.setItem(`remainingTime_${selected}`, updated);
-            return updated;
-        });
-    });
+        const end = localStorage.getItem(`endTime_${selected}`);
+        if (!end) {
+            setTimeLeft(0);
+            return;
+        }
+
+        const remaining = Math.max(0, Math.floor((Number(end) - Date.now()) / 1000));
+        setTimeLeft(remaining);
+    })
 
     const handleResult = () => {
         if (!selected) {
@@ -105,7 +98,7 @@ function Result() {
                 onChange={(e) => setSelected(e.target.value)}
                 style={{ padding: "5px", fontSize: "14px" }}
             >
-                <option value="">Select Subject</option>
+                {/* <option value="">Select Subject</option> */}
                 {subjects.map((item) => (
                     <option key={item.id} value={item.id}>
                         {item.subject}
@@ -123,9 +116,8 @@ function Result() {
                 <p>No result available</p>
             )}
 
-            <br />
-            <br />
-            <button onClick={() => navigate(-1)}>Back</button>
+            <br /><br />
+            <Buttons onClick={() => navigate(-1)} /> {" "}
 
             <dialog ref={dialogRef} className="score-dialog">
                 <p>Subject: {subName}</p>
@@ -137,7 +129,7 @@ function Result() {
                         <span style={{ color: "red" }}>FAIL</span>
                     )}
                 </p>
-                <button onClick={handleClose}>Close</button>
+                <Buttons onClick={handleClose} label="Close" />
             </dialog>
         </>
     );

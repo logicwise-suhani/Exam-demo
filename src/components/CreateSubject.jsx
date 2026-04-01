@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function CreateSubject() {
     const navigate = useNavigate();
-    const location = useLocation();
     const [show, setShow] = useState(false)
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        window.history.pushState(null, document.title, window.location.href);
-        window.addEventListener('popstate', () => {
+        const handlePopState = () => {
             window.history.pushState(null, document.title, window.location.href);
-        });
+        };
+
+        window.history.pushState(null, document.title, window.location.href);
+        window.addEventListener("popstate", handlePopState);
+
         return () => {
-            window.removeEventListener('popstate', () => {
-                window.history.pushState(null, document.title, window.location.href);
-            })
-        }
-    }, [location]);
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, []);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");

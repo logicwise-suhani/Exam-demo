@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Buttons from "./Button/Buttons";
 
 function SelectSubject() {
     const navigate = useNavigate();
@@ -54,7 +55,10 @@ function SelectSubject() {
             <nav className="navbar">
                 <button onClick={() => navigate("/result")} style={{ cursor: "pointer" }}>Result</button>
                 <p>Logged as: {userName}</p>
-                <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
+
+                <div className="red-btn">
+                    <Buttons onClick={handleLogOut} label="LogOut" />
+                </div>
             </nav>
 
             <h3>Choose your Exam</h3>

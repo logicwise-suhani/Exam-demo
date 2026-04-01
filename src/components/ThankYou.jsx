@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Buttons from "./Button/Buttons";
 
 function ThankYou() {
     const navigate = useNavigate();
@@ -16,7 +17,8 @@ function ThankYou() {
             <p onClick={() => navigate("/result")} style={{ color: "red", cursor: "pointer" }}>Click to show result</p>
 
             <br />
-            <button onClick={() => navigate(-1)}>Back</button> {" "}
+            <Buttons onClick={() => navigate(-1)} /> {" "}
+
             <button onClick={() => navigate("/selectSubject")}>
                 Give another Test
             </button>{" "}

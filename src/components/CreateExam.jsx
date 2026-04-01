@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSubjectName } from "../hooks/useSubjectName";
+import Buttons from './Button/Buttons';
 
 function CreateExam() {
     const { subjectId } = useParams();
@@ -49,7 +50,7 @@ function CreateExam() {
         validate("question", value);
     };
 
-    const validate = useCallback((name, value) => {
+    const validate = (name, value) => {
         let error = "";
 
         switch (name) {
@@ -65,9 +66,8 @@ function CreateExam() {
             default:
                 break;
         }
-
         setErrors(prev => ({ ...prev, [name]: error }));
-    }, []);
+    }
 
     const validateOption = (index, value) => {
         setErrors(prev => ({
@@ -76,16 +76,13 @@ function CreateExam() {
         }));
     };
 
-    const isValid = useMemo(() => {
-        return (
-            form.ques.trim() !== "" &&
-            form.correctOption !== null &&
-            form.options.every(opt => opt.trim() !== "") &&
-            form.timeSpent !== ""
-        );
-    }, [form]);
+    const isValid =
+        form.ques.trim() !== "" &&
+        form.correctOption !== null &&
+        form.options.every(opt => opt.trim() !== "") &&
+        form.timeSpent !== ""
 
-    const saveQuestion = useCallback((list, index, question) => {
+    const saveQuestion = (list, index, question) => {
         const updated = [...list];
 
         if (updated[index]) {
@@ -94,7 +91,7 @@ function CreateExam() {
             updated.push(question);
         }
         return updated;
-    }, []);
+    };
 
     const updateOption = (index, value) => {
         const updated = [...form.options];
@@ -118,14 +115,14 @@ function CreateExam() {
         });
     };
 
-    const buildQuestion = useCallback(() => ({
+    const buildQuestion = () => ({
         question: form.ques,
         options: form.options,
         correctAnswer: form.correctOption,
         timeTaken: Number(form.timeSpent) || 0
-    }), [form]);
+    });
 
-    const nextQuestion = useCallback(() => {
+    const nextQuestion = () => {
 
         if (!isValid) return;
 
@@ -155,7 +152,7 @@ function CreateExam() {
             resetForm();
         }
         setErrors({});
-    }, [isValid, currentIndex, questions, buildQuestion, saveQuestion]);
+    };
 
     const handleBack = () => {
         if (currentIndex === 0) {
@@ -261,7 +258,7 @@ function CreateExam() {
             </div>
 
             <div className='exam-btn'>
-                <button onClick={handleBack}>Back</button>{" "}
+                <Buttons onClick={handleBack} /> {" "}
                 <button onClick={nextQuestion} disabled={!isValid}>Next</button>{" "}
                 {currentIndex === 14 && <button onClick={previewQuestions}>Preview</button>}
             </div>

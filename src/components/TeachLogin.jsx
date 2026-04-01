@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Buttons from "./Button/Buttons";
 
 function TeachLogin() {
   const navigate = useNavigate();
@@ -47,14 +48,14 @@ function TeachLogin() {
       data.email === teacherEmail &&
       data.password === teacherPassword
     ) {
+
       const teacherUser = {
         email: teacherEmail,
         role: "teacher",
       };
-
       localStorage.setItem("user", JSON.stringify(teacherUser));
-
       navigate("/createSubject");
+
     } else {
       setLoginError("Invalid teacher credentials");
     }
@@ -107,7 +108,7 @@ function TeachLogin() {
         )}
 
         <br />
-        <button onClick={() => navigate("/")}>Back</button> {" "}
+        <Buttons onClick={() => navigate("/")} /> {" "}
 
         <button onClick={handleLogin} disabled={!isTeachValid}>
           Login

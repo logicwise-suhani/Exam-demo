@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
 import { useTimer } from "../hooks/useTimer";
+import Buttons from "./Button/Buttons";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
@@ -38,8 +39,8 @@ function ShowQuestions() {
             answers,
             isRunning
         };
-
         localStorage.setItem(`exam_state_${subjectId}`, JSON.stringify(examState));
+
     }, [displayQuestions, currentIndex, timeLeft, answers, isRunning, show, subjectId]);
 
     const generateQuestions = () => {
@@ -132,8 +133,10 @@ function ShowQuestions() {
     const handleDialogClose = () => {
         setIsDialogRunning(false);
 
-        const finalTime = dialogTimeLeft > 0 ? dialogTimeLeft : 0;
-        localStorage.setItem(`remainingTime_${subjectId}`, finalTime);
+        const duration = 300;
+        const endTime = Date.now() + duration * 1000;
+        localStorage.setItem(`endTime_${subjectId}`, endTime);
+
         localStorage.setItem("selectedSubjectId", subjectId);
         dialogRef.current.close();
 
@@ -197,13 +200,11 @@ function ShowQuestions() {
                 {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === displayQuestions.length - 1}>Next</button>}
             </div>
 
-            {displayQuestions.length > 0 ? "" : <button onClick={() => navigate("/selectSubject")}>Back</button>}
+            {displayQuestions.length > 0 ? "" : <Buttons onClick={() => navigate("/selectSubject")} />}
 
             <dialog ref={dialogRef} className="dialog-box">
                 <p>Result in: {formatTime(dialogTimeLeft)}</p>
-                <button onClick={handleDialogClose}>
-                    Close
-                </button>
+                <Buttons onClick={handleDialogClose} label="Close" />
             </dialog>
         </>
     )

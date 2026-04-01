@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Buttons from "./Button/Buttons";
 
 function Login() {
   const navigate = useNavigate();
@@ -112,10 +113,8 @@ function Login() {
         {loginError && <p style={{ color: "red" }}>{loginError}</p>}
 
         <br />
-        <button onClick={() => navigate("/")}>Back</button> {" "}
-
+        <Buttons onClick={() => navigate("/")} /> {" "}
         <button onClick={handleLogin} disabled={!isValid}> Login</button> {" "}
-
         <p>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
       </div>
     </div>
