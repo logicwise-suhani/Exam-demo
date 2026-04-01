@@ -6,8 +6,8 @@ import Register from "./components/Register";
 import CreateSubject from "./components/CreateSubject";
 import TeachLogin from "./components/TeachLogin";
 import CreateExam from "./components/CreateExam";
-import PrivateRoute from "./components/PrivateRoute";
-import { PublicRoute } from "./components/PublicRoute";
+import PrivateRoute from "./routes/PrivateRoute";
+import { PublicRoute } from "./routes/PublicRoute";
 import Preview from "./components/Preview";
 import SelectSubject from "./components/SelectSubject";
 import SavedQuestions from "./components/ShowQuestions";
@@ -16,11 +16,6 @@ import Result from "./components/Result";
 
 function App() {
   const navigate = useNavigate();
-
-  // const handleLogOut = () => {
-  //   localStorage.removeItem("user") || [];
-  //   navigate("/teacher-login")
-  // }
 
   return (
     <>
@@ -40,11 +35,7 @@ function App() {
             <button onClick={() => navigate("/")}>Back</button>
           </>
         } />
-        <Route path="/teacher-login" element={
-          <>
-            <TeachLogin />
-          </>
-        } />
+        <Route path="/teacher-login" element={<TeachLogin />} />
 
         <Route path="/create-exam/:subjectId" element={
           <PrivateRoute allowedRoles={["teacher"]}>
@@ -53,9 +44,7 @@ function App() {
 
         <Route path="/preview/:subjectId" element={<Preview />} />
         <Route path="/showQues/:subjectId" element={<SavedQuestions />} />
-
         <Route path="/thank-you/:subjectId" element={<ThankYou />} />
-
         <Route path="/result" element={<Result />} />
 
         <Route
@@ -79,7 +68,6 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-
     </>
   );
 }

@@ -9,13 +9,10 @@ function Preview() {
     const location = useLocation();
     const subName = useSubjectName();
     const [previewData, setPreviewData] = useState([]);
- 
+
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
-
-        if (storedData) {
-            setPreviewData(JSON.parse(storedData));
-        } 
+        setPreviewData(storedData ? JSON.parse(storedData) : "");
     }, [subjectId]);
 
     useEffect(() => {
@@ -56,7 +53,9 @@ function Preview() {
             <div className="preview-container">
                 <h2>Preview</h2>
                 <h3 style={{ color: "white" }}>{subName}</h3>
+
                 {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)}</h3>}
+
                 <div className={previewData.length === 0 ? "" : "preview"}>
                     {previewData.map((item, index) => (
                         <div key={index}>

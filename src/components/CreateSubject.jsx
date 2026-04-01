@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 function CreateSubject() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [show, setShow] = useState(false)
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
     const [error, setError] = useState("");
-    const location = useLocation(); 
 
     useEffect(() => {
         window.history.pushState(null, document.title, window.location.href);
@@ -105,7 +105,6 @@ function CreateSubject() {
 
     const handleLogOut = () => {
         const confirmLogOut = confirm("Are you sure want to Log Out?");
-
         if (confirmLogOut) {
             localStorage.removeItem("user") || [];
             navigate("/teacher-login")
@@ -134,10 +133,7 @@ function CreateSubject() {
                 )}{" "}
 
                 <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button>
-
-                {error && (
-                    <p style={{ color: "red" }}>{error}</p>
-                )}
+                {error && <p style={{ color: "red" }}>{error}</p>}
 
                 <br /> <br />
                 {listSubject.length > 0 ? < table border="1">
@@ -148,7 +144,7 @@ function CreateSubject() {
                             <td colSpan="3" style={{ textAlign: "center" }}>Action</td>
                         </tr>
                     </thead>
-                    <tbody> 
+                    <tbody>
                         {
                             listSubject.length ?
                                 listSubject?.map(({ id, subject }, index) => {

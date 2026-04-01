@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSubjectName } from "../hooks/useSubjectName";
 
-const CreateExam = () => {
+function CreateExam() {
     const { subjectId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -212,7 +212,6 @@ const CreateExam = () => {
                     placeholder='Type Question'
                     onBlur={(e) => validate("question", e.target.value)}
                 />
-
                 {errors.question && <p style={{ color: "red" }}>{errors.question}</p>}
 
                 <h3>Options</h3>
@@ -245,7 +244,6 @@ const CreateExam = () => {
                 ))}
 
                 {errors.correctOption && <p style={{ color: "red" }}>{errors.correctOption}</p>}
-
                 <br />
                 Time Required:{" "}
                 <input
@@ -259,7 +257,6 @@ const CreateExam = () => {
                 /> secs
 
                 {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
-
                 <br /><br />
             </div>
 
