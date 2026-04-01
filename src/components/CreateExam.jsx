@@ -13,15 +13,15 @@ function CreateExam() {
         ques: "",
         options: ["", "", "", ""],
         correctOption: null,
-        timeSpent: ""
+        timeSpent: "",
+        questions: []
     });
-    const [questions, setQuestions] = useState([]);
+    // const [questions, setQuestions] = useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const data = location.state?.examData;
         if (!data || data.length === 0) return;
-        setQuestions(data);
 
         if (data.length > 0) {
             const lastIndex = data.length - 1;
@@ -32,7 +32,8 @@ function CreateExam() {
                 ques: last.question,
                 options: last.options,
                 correctOption: last.correctAnswer,
-                timeSpent: last.timeTaken
+                timeSpent: last.timeTaken,
+                questions: data
             });
         }
     }, [location.state]);
@@ -40,7 +41,8 @@ function CreateExam() {
     useEffect(() => {
         const savedData = localStorage.getItem(`exam_${subjectId}`);
         if (savedData) {
-            setQuestions(JSON.parse(savedData));
+            const parsed = JSON.parse(savedData);
+            setForm(prev => ({ ...prev, questions: parsed }))
         }
     }, [subjectId]);
 
@@ -106,15 +108,6 @@ function CreateExam() {
         }));
     };
 
-    const resetForm = () => {
-        setForm({
-            ques: "",
-            options: ["", "", "", ""],
-            correctOption: null,
-            timeSpent: ""
-        });
-    };
-
     const buildQuestion = () => ({
         question: form.ques,
         options: form.options,
@@ -128,8 +121,7 @@ function CreateExam() {
 
         const newQuestion = buildQuestion();
 
-        const updatedQuestions = saveQuestion(questions, currentIndex, newQuestion);
-        setQuestions(updatedQuestions);
+        const updatedQuestions = saveQuestion(form.questions, currentIndex, newQuestion);
 
         if (currentIndex === 14) {
             alert("End of Question creation");
@@ -146,10 +138,18 @@ function CreateExam() {
                 ques: nextQues.question,
                 options: nextQues.options,
                 correctOption: nextQues.correctAnswer,
-                timeSpent: nextQues.timeTaken
+                timeSpent: nextQues.timeTaken,
+                questions: updatedQuestions
             });
         } else {
-            resetForm();
+            setForm(prev => ({
+                ...prev,
+                questions: updatedQuestions,
+                ques: "",
+                options: ["", "", "", ""],
+                correctOption: null,
+                timeSpent: ""
+            }));
         }
         setErrors({});
     };
@@ -161,24 +161,28 @@ function CreateExam() {
         }
 
         const prevIndex = currentIndex - 1;
-        const prevQuestion = questions[prevIndex];
+        const prevQuestion = form.questions[prevIndex];
 
         if (!prevQuestion) return;
         setCurrentIndex(prevIndex);
 
-        setForm({
+        setForm(prev => ({
+            ...prev,
             ques: prevQuestion.question,
             options: prevQuestion.options,
             correctOption: prevQuestion.correctAnswer,
             timeSpent: prevQuestion.timeTaken
-        });
+        }));
     };
 
     const previewQuestions = () => {
         const lastQuestion = buildQuestion();
 
-        const updatedQuestions = saveQuestion(questions, currentIndex, lastQuestion);
-        setQuestions(updatedQuestions);
+        const updatedQuestions = saveQuestion(form.questions, currentIndex, lastQuestion);
+        setForm(prev => ({
+            ...prev,
+            questions: updatedQuestions
+        }));
 
         navigate(`/preview/${subjectId}`, {
             state: { examData: updatedQuestions }
@@ -264,6 +268,6 @@ function CreateExam() {
             </div>
         </>
     );
-};
+}
 
 export default CreateExam;
