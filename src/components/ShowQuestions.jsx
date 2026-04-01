@@ -90,34 +90,28 @@ function ShowQuestions() {
     }, [getResult, subjectId])
 
     useEffect(() => {
-        if (!isRunning) return;
+        if (!isRunning || timeLeft > 0) return;
 
-        if (timeLeft <= 0) {
-            const nextIndex = currentIndex + 1;
-
-            if (nextIndex >= displayQuestions.length) {
-                submit();
-                return;
-            }
-
-            setCurrentIndex(nextIndex);
-            setTimeLeft(displayQuestions[nextIndex].timeTaken);
+        const nextIndex = currentIndex + 1;
+        if (nextIndex >= displayQuestions.length) {
+            submit();
+            return;
         }
+
+        setCurrentIndex(nextIndex);
+        setTimeLeft(displayQuestions[nextIndex].timeTaken);
+
     }, [timeLeft, isRunning, currentIndex, displayQuestions, getResult, subjectId, submit]);
 
     useEffect(() => {
-        const submitted = localStorage.getItem(`submitted_${subjectId}`);
-        if (submitted === "true") {
+        if (isSubmitted) {
             navigate("/selectSubject");
         }
-    }, [subjectId, navigate]);
+    }, [navigate, isSubmitted]);
 
     const handleSubmit = () => {
         if (isSubmitted) return;
-
-        const confirmSubmit = confirm("Are you sure want to Submit?");
-        if (!confirmSubmit) return;
-
+        if (!confirm("Are you sure want to Submit?")) return;
         submit();
     };
 
@@ -126,7 +120,6 @@ function ShowQuestions() {
             setError("Please choose an option");
             return;
         }
-
         setError("");
 
         if (currentIndex < displayQuestions.length - 1) {

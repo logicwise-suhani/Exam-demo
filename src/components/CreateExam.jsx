@@ -7,7 +7,7 @@ const CreateExam = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const subName = useSubjectName();
-    const [quesNumber, setQuesNumber] = useState(1);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [form, setForm] = useState({
         ques: "",
         options: ["", "", "", ""],
@@ -18,21 +18,21 @@ const CreateExam = () => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        if (location.state?.examData) {
-            const data = location.state.examData;
-            setQuestions(data);
+        const data = location.state?.examData;
+        if (!data || data.length === 0) return;
+        setQuestions(data);
 
-            if (data.length > 0) {
-                const last = data[data.length - 1];
+        if (data.length > 0) {
+            const lastIndex = data.length - 1;
+            const last = data[lastIndex];
 
-                setQuesNumber(data.length);
-                setForm({
-                    ques: last.question,
-                    options: last.options,
-                    correctOption: last.correctAnswer,
-                    timeSpent: last.timeTaken
-                });
-            }
+            setCurrentIndex(lastIndex);
+            setForm({
+                ques: last.question,
+                options: last.options,
+                correctOption: last.correctAnswer,
+                timeSpent: last.timeTaken
+            });
         }
     }, [location.state]);
 
@@ -52,44 +52,38 @@ const CreateExam = () => {
     const validate = useCallback((name, value) => {
         let error = "";
 
-        if (name === "question" && !value.trim()) {
-            error = "Fill the question!";
+        switch (name) {
+            case "question":
+                if (!value.trim()) error = "Fill the question!";
+                break;
+            case "timeSpent":
+                if (!value.trim()) error = "Enter Time Required";
+                break;
+            case "correctOption":
+                if (value === null) error = "Please select correct answer.";
+                break;
+            default:
+                break;
         }
 
-        if (name === "timeSpent" && !value.trim()) {
-            error = "Enter Time Required";
-        }
-
-        if (name === "correctOption" && value === null) {
-            error = "Please select correct answer.";
-        }
-
-        setErrors(prev => ({
-            ...prev,
-            [name]: error
-        }));
-    }, [])
+        setErrors(prev => ({ ...prev, [name]: error }));
+    }, []);
 
     const validateOption = (index, value) => {
-        let message = "";
-
-        if (!value.trim()) {
-            message = "Option required";
-        }
-
         setErrors(prev => ({
             ...prev,
-            [`option${index}`]: message
+            [`option${index}`]: !value.trim() ? "Option required" : ""
         }));
     };
 
     const isValid = useMemo(() => {
-        return (form.ques.trim() !== "" &&
+        return (
+            form.ques.trim() !== "" &&
             form.correctOption !== null &&
             form.options.every(opt => opt.trim() !== "") &&
             form.timeSpent !== ""
         );
-    }, [form.ques, form.options, form.correctOption, form.timeSpent])
+    }, [form]);
 
     const saveQuestion = useCallback((list, index, question) => {
         const updated = [...list];
@@ -129,69 +123,64 @@ const CreateExam = () => {
         options: form.options,
         correctAnswer: form.correctOption,
         timeTaken: Number(form.timeSpent) || 0
-    }), [form.correctOption, form.ques, form.options, form.timeSpent]);
+    }), [form]);
 
-    const nextQuestion = useCallback(
-        () => {
+    const nextQuestion = useCallback(() => {
 
-            if (!isValid) return;
+        if (!isValid) return;
 
-            const newQuestion = buildQuestion();
-            const updatedQuestions = saveQuestion(questions, quesNumber - 1, newQuestion);
+        const newQuestion = buildQuestion();
 
-            setQuestions(updatedQuestions);
+        const updatedQuestions = saveQuestion(questions, currentIndex, newQuestion);
+        setQuestions(updatedQuestions);
 
-            if (quesNumber === 15) {
-                alert("End of Question creation")
-                return;
-            }
+        if (currentIndex === 14) {
+            alert("End of Question creation");
+            return;
+        }
 
-            const nextIndex = quesNumber;
-            setQuesNumber(prev => prev + 1);
+        const nextIndex = currentIndex + 1;
+        setCurrentIndex(nextIndex);
 
-            if (updatedQuestions[nextIndex]) {
-                const nextQues = updatedQuestions[nextIndex];
+        if (updatedQuestions[nextIndex]) {
+            const nextQues = updatedQuestions[nextIndex];
 
-                setForm({
-                    ques: nextQues.question,
-                    options: nextQues.options,
-                    correctOption: nextQues.correctAnswer,
-                    timeSpent: nextQues.timeTaken
-                });
-            }
-            else {
-                resetForm();
-            }
-            setErrors({});
-
-        }, [isValid, quesNumber, questions, buildQuestion, saveQuestion])
+            setForm({
+                ques: nextQues.question,
+                options: nextQues.options,
+                correctOption: nextQues.correctAnswer,
+                timeSpent: nextQues.timeTaken
+            });
+        } else {
+            resetForm();
+        }
+        setErrors({});
+    }, [isValid, currentIndex, questions, buildQuestion, saveQuestion]);
 
     const handleBack = () => {
-
-        if (quesNumber === 1) {
+        if (currentIndex === 0) {
             navigate("/createSubject");
             return;
         }
 
-        const prevIndex = quesNumber - 2;
+        const prevIndex = currentIndex - 1;
         const prevQuestion = questions[prevIndex];
 
         if (!prevQuestion) return;
-        setQuesNumber(prev => prev - 1);
+        setCurrentIndex(prevIndex);
 
         setForm({
             ques: prevQuestion.question,
             options: prevQuestion.options,
             correctOption: prevQuestion.correctAnswer,
             timeSpent: prevQuestion.timeTaken
-        })
+        });
     };
 
     const previewQuestions = () => {
-
         const lastQuestion = buildQuestion();
 
-        const updatedQuestions = saveQuestion(questions, quesNumber - 1, lastQuestion);
+        const updatedQuestions = saveQuestion(questions, currentIndex, lastQuestion);
         setQuestions(updatedQuestions);
 
         navigate(`/preview/${subjectId}`, {
@@ -202,7 +191,7 @@ const CreateExam = () => {
     const handleKeyDown = (e) => {
         const invalid = ['e', 'E', '.', '+', '-'];
         if (invalid.includes(e.key)) e.preventDefault();
-    }
+    };
 
     return (
         <>
@@ -214,13 +203,16 @@ const CreateExam = () => {
 
             <br />
             <div className='create-exam'>
-                <label>Ques no: {quesNumber} </label> <br />
+                <label>Ques no: {currentIndex + 1}</label>
+
+                <br />
                 <textarea
                     value={form.ques}
                     onChange={handleQuestionChange}
                     placeholder='Type Question'
                     onBlur={(e) => validate("question", e.target.value)}
                 />
+
                 {errors.question && <p style={{ color: "red" }}>{errors.question}</p>}
 
                 <h3>Options</h3>
@@ -231,10 +223,11 @@ const CreateExam = () => {
                             value={index}
                             checked={form.correctOption === index}
                             onChange={() => {
-                                updateForm("correctOption", index)
+                                updateForm("correctOption", index);
                                 validate("correctOption", index);
                             }}
                         />
+
                         <input
                             type="text"
                             value={opt}
@@ -244,7 +237,7 @@ const CreateExam = () => {
                         />
 
                         {errors[`option${index}`] && (
-                            < p style={{ color: "red" }}>
+                            <p style={{ color: "red" }}>
                                 {errors[`option${index}`]}
                             </p>
                         )}
@@ -252,8 +245,9 @@ const CreateExam = () => {
                 ))}
 
                 {errors.correctOption && <p style={{ color: "red" }}>{errors.correctOption}</p>}
-                < br />
-                Time Required: {" "}
+
+                <br />
+                Time Required:{" "}
                 <input
                     style={{ width: "40px" }}
                     type='number'
@@ -266,15 +260,16 @@ const CreateExam = () => {
 
                 {errors.timeSpent && <p style={{ color: "red" }}>{errors.timeSpent}</p>}
 
-                <br /> <br />
-            </div >
+                <br /><br />
+            </div>
+
             <div className='exam-btn'>
-                <button onClick={handleBack} > Back</button> {" "}
-                <button onClick={nextQuestion} disabled={!isValid}>Next</button> {" "}
-                {quesNumber === 15 && <button onClick={previewQuestions}>Preview</button>}
+                <button onClick={handleBack}>Back</button>{" "}
+                <button onClick={nextQuestion} disabled={!isValid}>Next</button>{" "}
+                {currentIndex === 14 && <button onClick={previewQuestions}>Preview</button>}
             </div>
         </>
-    )
-}
+    );
+};
 
 export default CreateExam;

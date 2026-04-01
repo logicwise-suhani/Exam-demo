@@ -10,6 +10,4 @@ export function useTimer(isActive, callback) {
         return () => clearInterval(interval);
     }, [isActive, callback]);
 }
-
-
   

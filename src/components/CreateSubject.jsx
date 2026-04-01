@@ -7,7 +7,7 @@ function CreateSubject() {
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
     const [error, setError] = useState("");
-    const location = useLocation();
+    const location = useLocation(); 
 
     useEffect(() => {
         window.history.pushState(null, document.title, window.location.href);
