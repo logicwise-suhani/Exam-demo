@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Buttons from "./Button/Buttons";
+import useFormValidation from "../hooks/useError";
 
 function Login() {
   const navigate = useNavigate();
-
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
+  const { data,
+    errors,
+    touched,
+    handleChange,
+    handleBlur
+  } = useFormValidation({
+    email: "",
+    password: ""
+  }, validate);
 
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("user"));
@@ -26,7 +28,11 @@ function Login() {
     }
   }, [navigate]);
 
-  const validate = (values) => {
+  const handleInputChange = (e) => {
+    handleChange(e, () => setLoginError(""));
+  };
+
+  function validate(values) {
     const errors = {};
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,19 +47,6 @@ function Login() {
     }
 
     return errors;
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const updated = { ...data, [name]: value };
-
-    setData(updated);
-    setErrors(validate(updated));
-    setLoginError("");
-  };
-
-  const handleBlur = (e) => {
-    setTouched({ ...touched, [e.target.name]: true });
   };
 
   const handleLogin = () => {
@@ -92,7 +85,7 @@ function Login() {
           placeholder="Enter email"
           name="email"
           value={data.email}
-          onChange={handleChange}
+          onChange={handleInputChange}
           onBlur={handleBlur}
         /> <br />
         <span style={{ color: "red" }}>{touched.email && errors.email}</span>
@@ -103,7 +96,7 @@ function Login() {
           placeholder="Enter password"
           name="password"
           value={data.password}
-          onChange={handleChange}
+          onChange={handleInputChange}
           onBlur={handleBlur}
         />
         <br />

@@ -16,7 +16,6 @@ function CreateExam() {
         timeSpent: "",
         questions: []
     });
-    // const [questions, setQuestions] = useState([]);
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -69,6 +68,7 @@ function CreateExam() {
                 break;
         }
         setErrors(prev => ({ ...prev, [name]: error }));
+
     }
 
     const validateOption = (index, value) => {
@@ -151,6 +151,7 @@ function CreateExam() {
                 timeSpent: ""
             }));
         }
+
         setErrors({});
     };
 

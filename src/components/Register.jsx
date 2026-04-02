@@ -1,17 +1,19 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useFormValidation from "../hooks/useError";;
 
 function Register() {
-    const [data, setData] = useState({
-        email: "",
-        password: "",
-    });
-
-    const [errors, setErrors] = useState({});
-    const [touched, setTouched] = useState({});
     const navigate = useNavigate();
+    const { data,
+        errors,
+        touched,
+        handleChange,
+        handleBlur
+    } = useFormValidation({
+        email: "",
+        password: ""
+    }, validate);
 
-    const validate = (values) => {
+    function validate(values) {
         const errors = {};
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,17 +28,6 @@ function Register() {
         }
 
         return errors;
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        const updated = { ...data, [name]: value };
-        setData(updated);
-        setErrors(validate(updated));
-    };
-
-    const handleBlur = (e) => {
-        setTouched({ ...touched, [e.target.name]: true });
     };
 
     const handleRegister = () => {
@@ -65,7 +56,6 @@ function Register() {
 
     const alreadyRegistered = () => {
         const loggedUser = JSON.parse(localStorage.getItem("user")) || [];
-
         if (loggedUser) {
             navigate("/login");
         }
@@ -99,7 +89,7 @@ function Register() {
             <button onClick={handleRegister} disabled={!isValid}>
                 Register
             </button>
-            
+
             <br /> <br />
             <p>Already registered? <span onClick={alreadyRegistered} style={{ cursor: "pointer", color: "red" }}>Please Login</span></p>
         </div>

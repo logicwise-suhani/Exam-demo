@@ -1,22 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Buttons from "./Button/Buttons";
+import useFormValidation from "../hooks/useError";
 
 function TeachLogin() {
   const navigate = useNavigate();
-
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
   const [loginError, setLoginError] = useState("");
+  const { data,
+    errors,
+    touched,
+    handleChange,
+    handleBlur
+  } = useFormValidation({
+    email: "",
+    password: ""
+  }, teachValidate);
 
   const teacherEmail = "teacher@teach.com";
   const teacherPassword = "Te111111";
 
-  const teachValidate = (values) => {
+  function teachValidate(values) {
     const errors = {};
 
     if (!values.email.includes("@")) {
@@ -30,17 +33,8 @@ function TeachLogin() {
     return errors;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    const updated = { ...data, [name]: value };
-
-    setData(updated);
-    setErrors(teachValidate(updated));
-    setLoginError("");
-  };
-
-  const handleBlur = (e) => {
-    setTouched({ ...touched, [e.target.name]: true });
+  const handleInputChange = (e) => {
+    handleChange(e, () => setLoginError(""));
   };
 
   const handleLogin = () => {
@@ -61,6 +55,14 @@ function TeachLogin() {
     }
 
   };
+
+  useEffect(() => {
+    const logged = localStorage.getItem("user");
+    if (logged) {
+      navigate("/createSubject");
+    }
+    return;
+  }, [navigate]);
 
   // const alreadyLogged = () => {
   //   const logged = localStorage.getItem("user");
@@ -86,7 +88,7 @@ function TeachLogin() {
           placeholder="Enter email"
           name="email"
           value={data.email}
-          onChange={handleChange}
+          onChange={handleInputChange}
           onBlur={handleBlur}
         /> {" "}
         <span>{touched.email && errors.email}</span>
@@ -97,7 +99,7 @@ function TeachLogin() {
           placeholder="Enter password"
           name="password"
           value={data.password}
-          onChange={handleChange}
+          onChange={handleInputChange}
           onBlur={handleBlur}
         /> {" "}
         <span>{touched.password && errors.password}</span>

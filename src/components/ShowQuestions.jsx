@@ -10,7 +10,7 @@ function ShowQuestions() {
     const navigate = useNavigate();
     const dialogRef = useRef();
     const subName = useSubjectName();
-    const [error, setError] = useState('');
+    const [error, setError] = useState(''); 
     const [savedData, setSavedData] = useState([]);
     const [displayQuestions, setDisplayQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);

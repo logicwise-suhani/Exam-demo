@@ -6,7 +6,7 @@ function CreateSubject() {
     const [show, setShow] = useState(false)
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
-    const [error, setError] = useState("");
+    const [error, setError] = useState(""); 
 
     useEffect(() => {
         const handlePopState = () => {
