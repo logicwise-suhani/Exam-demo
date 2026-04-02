@@ -62,7 +62,7 @@ function SelectSubject() {
             <div className="select-subject">
                 {subjects.map((item) => (
                     <div key={item.id}>
-                        <label style={{ cursor: "pointer", color: "pink" }} onClick={() => handleClick(item.id)}> {item.subject}</label>
+                        <label onClick={() => handleClick(item.id)}> {item.subject}</label>
                     </div>
                 ))}
             </div>

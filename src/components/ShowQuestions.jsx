@@ -173,7 +173,7 @@ function ShowQuestions() {
                 </div>
 
                 <div className="nav-center">
-                    <h2>{subName} <br /> <span style={{ fontSize: "20px" }}>{`Subject ID is : ${subjectId}`}</span> </h2>
+                    <h2>{subName} <br /> <span>{`Subject ID is : ${subjectId}`}</span> </h2>
                 </div>
 
                 <div className="nav-right">

@@ -216,6 +216,10 @@ h3 {
   text-align: center;
 }
 
+.nav-center span {
+  font-size: 20px;
+}
+
 .nav-right {
   flex: 1;
   text-align: center;
@@ -241,6 +245,11 @@ h3 {
 
 .select-subject {
   margin-top: 20px;
+}
+
+.select-subject label {
+  cursor: pointer;
+  color: pink;
 }
 
 .select-btn {

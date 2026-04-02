@@ -237,11 +237,7 @@ function CreateExam() {
                             onBlur={(e) => validateOption(index, e.target.value)}
                         />
 
-                        {errors[`option${index}`] && (
-                            <p style={{ color: "red" }}>
-                                {errors[`option${index}`]}
-                            </p>
-                        )}
+                        {errors[`option${index}`] && (<p style={{ color: "red" }}>{errors[`option${index}`]}</p>)}
                     </div>
                 ))}
 
