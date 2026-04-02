@@ -6,12 +6,7 @@ import useFormValidation from "../hooks/useError";
 function Login() {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
-  const { data,
-    errors,
-    touched,
-    handleChange,
-    handleBlur
-  } = useFormValidation({
+  const { data, errors, touched, handleChange, handleBlur } = useFormValidation({
     email: "",
     password: ""
   }, validate);

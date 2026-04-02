@@ -3,12 +3,7 @@ import useFormValidation from "../hooks/useError";;
 
 function Register() {
     const navigate = useNavigate();
-    const { data,
-        errors,
-        touched,
-        handleChange,
-        handleBlur
-    } = useFormValidation({
+    const { data, errors, touched, handleChange, handleBlur } = useFormValidation({
         email: "",
         password: ""
     }, validate);
@@ -65,33 +60,34 @@ function Register() {
         <div>
             <h2>Register</h2>
 
-            <input
-                name="email"
-                placeholder="Email"
-                value={data.email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-            />
-            <span>{touched.email && errors.email}</span>
+            <div className="login">
+                <input
+                    name="email"
+                    placeholder="Email"
+                    value={data.email}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                />
+                <span>{touched.email && errors.email}</span>
 
-            <br />
-            <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={data.password}
-                onChange={handleChange}
-                onBlur={handleBlur}
-            />
-            <span>{touched.password && errors.password}</span>
+                <br /> <br />
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    value={data.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                />
+                <span>{touched.password && errors.password}</span>
 
-            <br /> <br />
-            <button onClick={handleRegister} disabled={!isValid}>
-                Register
-            </button>
-
-            <br /> <br />
-            <p>Already registered? <span onClick={alreadyRegistered} style={{ cursor: "pointer", color: "red" }}>Please Login</span></p>
+                <br /> <br />
+                <button onClick={handleRegister} disabled={!isValid}>
+                    Register
+                </button>
+                <br /> <br />
+                <p>Already registered? <span onClick={alreadyRegistered} style={{ cursor: "pointer", color: "red" }}>Please Login</span></p>
+            </div>
         </div>
     );
 }
