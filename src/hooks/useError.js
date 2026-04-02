@@ -15,7 +15,6 @@ function useFormValidation(initialValues, validateFn) {
         if (extraCallback) extraCallback();
     };
 
-
     const handleBlur = (e) => {
         setTouched({ ...touched, [e.target.name]: true });
     };

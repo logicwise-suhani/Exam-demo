@@ -3,24 +3,25 @@ import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
 import { useTimer } from "../hooks/useTimer";
-import Buttons from "./Button/Buttons";
+import Buttons from "./Reusable components/Buttons";
+import useQuestion from "../hooks/useQuestion";
+import Options from "./Reusable components/Options";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
     const navigate = useNavigate();
     const dialogRef = useRef();
     const subName = useSubjectName();
-    const [error, setError] = useState(''); 
+    const { currentIndex, answers, error, selectAnswer, next } = useQuestion();
     const [savedData, setSavedData] = useState([]);
     const [displayQuestions, setDisplayQuestions] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
     const [show, setShow] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(0);
-    const [answers, setAnswers] = useState({});
-    const [dialogTimeLeft, setDialogTimeLeft] = useState(0);
-    const [isDialogRunning, setIsDialogRunning] = useState(false);
-
+    const [timer, setTimer] = useState({
+        timeLeft: 0,
+        isRunning: false,
+        dialogTimeLeft: 0,
+        isDialogRunning: false
+    })
     const userName = JSON.parse(localStorage.getItem("user"))?.email || [];
     const isSubmitted = localStorage.getItem(`submitted_${subjectId}`) === "true";
 
@@ -35,13 +36,13 @@ function ShowQuestions() {
         const examState = {
             displayQuestions,
             currentIndex,
-            timeLeft,
+            timeLeft: timer.timeLeft,
             answers,
-            isRunning
+            isRunning: timer.isRunning
         };
         localStorage.setItem(`exam_state_${subjectId}`, JSON.stringify(examState));
 
-    }, [displayQuestions, currentIndex, timeLeft, answers, isRunning, show, subjectId]);
+    }, [displayQuestions, currentIndex, answers, show, subjectId, timer.timeLeft, timer.isRunning]);
 
     const generateQuestions = () => {
         if (savedData.length === 0) {
@@ -51,12 +52,13 @@ function ShowQuestions() {
         const shuffled = [...savedData].sort(() => 0.5 - Math.random());
 
         const randomEight = shuffled.slice(0, 8);
-
         setDisplayQuestions(randomEight);
-        setCurrentIndex(0);
 
-        setTimeLeft(randomEight[0].timeTaken);
-        setIsRunning(true);
+        setTimer(prev => ({
+            ...prev,
+            isRunning: true,
+            timeLeft: randomEight[0].timeTaken
+        }));
         setShow(true);
 
         localStorage.setItem("randomEight", JSON.stringify(randomEight));
@@ -70,28 +72,44 @@ function ShowQuestions() {
             }));
         }, [answers, displayQuestions])
 
-    useTimer(isRunning, () => { setTimeLeft(prev => prev - 1) })
-    useTimer(isDialogRunning, () => {
-        if (dialogTimeLeft <= 0) {
-            setIsDialogRunning(false);
+    useTimer(timer.isRunning, () => {
+        setTimer(prev => ({
+            ...prev,
+            timeLeft: prev.timeLeft - 1
+        }));
+    })
+    useTimer(timer.isDialogRunning, () => {
+        if (timer.dialogTimeLeft <= 0) {
+            setTimer(prev => ({
+                ...prev,
+                isDialogRunning: false
+            }));
             navigate(`/thank-you/${subjectId}`);
             return;
         }
-        setDialogTimeLeft(prev => prev - 1)
+        setTimer(prev => ({
+            ...prev,
+            dialogTimeLeft: prev.dialogTimeLeft - 1
+        }));
     })
 
     const submit = useCallback(() => {
         const result = getResult();
+
         localStorage.setItem(`test_${subjectId}`, JSON.stringify(result));
         localStorage.setItem(`submitted_${subjectId}`, "true");
         dialogRef.current?.showModal();
-        setDialogTimeLeft(300);
-        setIsDialogRunning(true);
-        setIsRunning(false);
+
+        setTimer(prev => ({
+            ...prev,
+            dialogTimeLeft: 300,
+            isDialogRunning: true,
+            isRunning: false
+        }));
     }, [getResult, subjectId])
 
     useEffect(() => {
-        if (!isRunning || timeLeft > 0) return;
+        if (!timer.isRunning || timer.timeLeft > 0) return;
 
         const nextIndex = currentIndex + 1;
         if (nextIndex >= displayQuestions.length) {
@@ -99,10 +117,12 @@ function ShowQuestions() {
             return;
         }
 
-        setCurrentIndex(nextIndex);
-        setTimeLeft(displayQuestions[nextIndex].timeTaken);
-
-    }, [timeLeft, isRunning, currentIndex, displayQuestions, getResult, subjectId, submit]);
+        next(displayQuestions, true);
+        setTimer(prev => ({
+            ...prev,
+            timeLeft: displayQuestions[nextIndex].timeTaken
+        }));
+    }, [timer.timeLeft, timer.isRunning, currentIndex, displayQuestions, submit, next]);
 
     useEffect(() => {
         if (isSubmitted) {
@@ -117,22 +137,21 @@ function ShowQuestions() {
     };
 
     const handleNext = () => {
-        if (answers[currentIndex] === undefined) {
-            setError("Please choose an option");
-            return;
-        }
-        setError("");
-
-        if (currentIndex < displayQuestions.length - 1) {
+        const moved = next(displayQuestions);
+        if (moved) {
             const nextIndex = currentIndex + 1;
-            setCurrentIndex(nextIndex);
-            setTimeLeft(displayQuestions[nextIndex].timeTaken);
+            setTimer(prev => ({
+                ...prev,
+                timeLeft: displayQuestions[nextIndex].timeTaken
+            }));
         }
     };
 
     const handleDialogClose = () => {
-        setIsDialogRunning(false);
-
+        setTimer(prev => ({
+            ...prev,
+            isDialogRunning: false
+        }));
         const duration = 300;
         const endTime = Date.now() + duration * 1000;
         localStorage.setItem(`endTime_${subjectId}`, endTime);
@@ -141,7 +160,7 @@ function ShowQuestions() {
         dialogRef.current.close();
 
         navigate(`/thank-you/${subjectId}`, {
-            state: { remainingTime: dialogTimeLeft }
+            state: { remainingTime: timer.dialogTimeLeft }
         });
     };
 
@@ -150,7 +169,7 @@ function ShowQuestions() {
             <nav className="navbar-ques">
 
                 <div className="nav-left"> {!show ? <button onClick={generateQuestions}>Start Exam</button>
-                    : displayQuestions.length > 0 && <p >Time left is : <span style={{ color: timeLeft < 10 ? "red" : "" }}>{formatTime(timeLeft)}</span> </p>} {" "}
+                    : displayQuestions.length > 0 && <p >Time left is : <span style={{ color: timer.timeLeft < 10 ? "red" : "" }}>{formatTime(timer.timeLeft)}</span> </p>} {" "}
                 </div>
 
                 <div className="nav-center">
@@ -174,27 +193,14 @@ function ShowQuestions() {
                 <div className="display-ques">
                     <h4>{currentIndex + 1}. {displayQuestions[currentIndex].question}</h4>
 
-                    {displayQuestions[currentIndex].options.map((opt, i) => (
-                        <div key={i}>
-                            <input
-                                type="radio"
-                                name={`Question-${currentIndex}`}
-                                checked={answers[currentIndex] === i}
-                                onChange={() => {
-                                    setAnswers({
-                                        ...answers,
-                                        [currentIndex]: i
-                                    });
-                                    setError("");
-                                }}
-                            />
-                            <label>{opt}</label>
-                        </div>
-                    ))}
+                    <Options
+                        options={displayQuestions[currentIndex].options}
+                        selected={answers[currentIndex]}
+                        onSelect={(i) => selectAnswer(currentIndex, i)}
+                    />
                     {error && <div style={{ color: "red" }}>{error}</div>}
                 </div>
-            )}
-            <br />
+            )} <br />
 
             <div className="show-next">
                 {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === displayQuestions.length - 1}>Next</button>}
@@ -203,7 +209,7 @@ function ShowQuestions() {
             {displayQuestions.length > 0 ? "" : <Buttons onClick={() => navigate("/selectSubject")} />}
 
             <dialog ref={dialogRef} className="dialog-box">
-                <p>Result in: {formatTime(dialogTimeLeft)}</p>
+                <p>Result in: {formatTime(timer.dialogTimeLeft)}</p>
                 <Buttons onClick={handleDialogClose} label="Close" />
             </dialog>
         </>
@@ -211,15 +217,3 @@ function ShowQuestions() {
 }
 
 export default ShowQuestions;
-
-
-
-
-
-
-
-// const notValid = Object.keys(answers).length !== displayQuestions.length;
-// if (notValid) {
-//     alert("Please answer all questions before submitting!");
-//     return;
-// }

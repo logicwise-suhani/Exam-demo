@@ -39,7 +39,7 @@ function App() {
 
         <Route path="/create-exam/:subjectId" element={
           <PrivateRoute allowedRoles={["teacher"]}>
-            <CreateExam />
+            <CreateExam /> 
           </PrivateRoute>} />
 
         <Route path="/preview/:subjectId" element={<Preview />} />
