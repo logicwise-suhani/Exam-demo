@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
-import Buttons from "./Button/Buttons";
+import Buttons from "./layout/Buttons";
 
 function Preview() {
     const { subjectId } = useParams();

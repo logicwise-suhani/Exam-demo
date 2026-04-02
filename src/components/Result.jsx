@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { formatTime } from "../utils/timeFormatter";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSubjectName } from "../hooks/useSubjectName";
-import Buttons from "./Button/Buttons";
+import Buttons from "./layout/Buttons";
 import { useTimer } from "../hooks/useTimer";
 
 function Result() {
@@ -28,7 +28,6 @@ function Result() {
             setTimeLeft(0);
             return;
         }
-
         const remaining = Math.max(0, Math.floor((Number(end) - Date.now()) / 1000));
         setTimeLeft(remaining);
     })
@@ -54,7 +53,6 @@ function Result() {
         }
 
         let totalScore = 0;
-
         resArray.forEach((t) => {
             if (t.correctAnswer === t.selectedAnswer) {
                 totalScore += 1;
@@ -78,12 +76,13 @@ function Result() {
 
     const hasResult = selected && !!localStorage.getItem(`test_${selected}`);
 
-    let subjects = [];
-    try {
-        subjects = JSON.parse(localStorage.getItem("subjects")) || [];
-    } catch {
-        subjects = [];
-    }
+    const subjects = useMemo(() => {
+        try {
+            return JSON.parse(localStorage.getItem("subjects")) || [];
+        } catch {
+            return [];
+        }
+    }, []);
 
     return (
         <>
@@ -93,29 +92,28 @@ function Result() {
                 </div>
             </nav>
 
-            <select
-                value={selected}
-                onChange={(e) => setSelected(e.target.value)}
-                style={{ padding: "5px", fontSize: "14px" }}
-            >
-                {/* <option value="">Select Subject</option> */}
-                {subjects.map((item) => (
-                    <option key={item.id} value={item.id}>
-                        {item.subject}
-                    </option>
-                ))}
-            </select>
+            <div className="drop-down">
+                <select
+                    value={selected}
+                    onChange={(e) => setSelected(e.target.value)}
+                >
+                    {/* <option value="">Select Subject</option> */}
+                    {subjects.map((item) => (
+                        <option key={item.id} value={item.id}>
+                            {item.subject}
+                        </option>
+                    ))}
+                </select>{" "}
 
-            {" "}
 
-            {timeLeft > 0 ? (
-                <p>Result in: {formatTime(timeLeft)}</p>
-            ) : hasResult ? (
-                <button onClick={handleDialog}>View Result</button>
-            ) : (
-                <p>No result available</p>
-            )}
-
+                {timeLeft > 0 ? (
+                    <p>Result in: {formatTime(timeLeft)}</p>
+                ) : hasResult ? (
+                    <button onClick={handleDialog}>View Result</button>
+                ) : (
+                    <p>No result available</p>
+                )}
+            </div>
             <br /><br />
             <Buttons onClick={() => navigate(-1)} /> {" "}
 

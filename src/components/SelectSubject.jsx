@@ -1,35 +1,32 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import Buttons from "./Button/Buttons";
+import { useNavigate } from "react-router-dom";
+import Buttons from "./layout/Buttons";
 
 function SelectSubject() {
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
     const [userName, setUserName] = useState("");
-    const location = useLocation();
 
     useEffect(() => {
-        window.history.pushState(null, document.title, window.location.href);
-        window.addEventListener('popstate', () => {
+        const handlePopState = () => {
             window.history.pushState(null, document.title, window.location.href);
-        });
+        };
+
+        window.history.pushState(null, document.title, window.location.href);
+        window.addEventListener('popstate', handlePopState);
+
         return () => {
-            window.removeEventListener('popstate', () => {
-                window.history.pushState(null, document.title, window.location.href);
-            })
-        }
-    }, [location]);
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, []);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
         if (subjectList !== "null" && subjectList?.length > 0) {
             setSubjects(JSON.parse(subjectList))
         }
-    }, []);
-
-    useEffect(() => {
         const name = JSON.parse(localStorage.getItem("user")) || [];
-        if (name) {
+        if (name?.email) {
             setUserName(name.email)
         }
     }, []);
@@ -63,8 +60,8 @@ function SelectSubject() {
 
             <h3>Choose your Exam</h3>
             <div className="select-subject">
-                {subjects.map((item, index) => (
-                    <div key={index}>
+                {subjects.map((item) => (
+                    <div key={item.id}>
                         <label style={{ cursor: "pointer", color: "pink" }} onClick={() => handleClick(item.id)}> {item.subject}</label>
                     </div>
                 ))}

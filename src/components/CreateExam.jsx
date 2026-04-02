@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSubjectName } from "../hooks/useSubjectName";
-import Buttons from './Button/Buttons';
+import Buttons from './layout/Buttons';
 
 function CreateExam() {
     const { subjectId } = useParams();

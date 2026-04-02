@@ -13,6 +13,28 @@
   position: relative;
 }
 
+.drop-down {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.drop-down select {
+  background-color: #ba3f8bb9;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid pink;
+  margin: 0;
+  padding: 5px;
+}
+
+.drop-down button:focus-visible,
+button:focus {
+  border: none;
+}
+
 .heading {
   display: flex;
   flex-direction: column;

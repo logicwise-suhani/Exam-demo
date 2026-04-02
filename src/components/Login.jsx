@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Buttons from "./Button/Buttons";
+import Buttons from "./layout/Buttons";
 import useFormValidation from "../hooks/useError";
 
 function Login() {

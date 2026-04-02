@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Buttons from "./Button/Buttons";
+import Buttons from "./layout/Buttons";
 import useFormValidation from "../hooks/useError";
 
 function TeachLogin() {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState("");
-  const { data,
-    errors,
-    touched,
-    handleChange,
-    handleBlur
-  } = useFormValidation({
+  const { data, errors, touched, handleChange, handleBlur } = useFormValidation({
     email: "",
     password: ""
   }, teachValidate);
@@ -111,7 +106,6 @@ function TeachLogin() {
 
         <br />
         <Buttons onClick={() => navigate("/")} /> {" "}
-
         <button onClick={handleLogin} disabled={!isTeachValid}>
           Login
         </button> {" "}
@@ -119,7 +113,6 @@ function TeachLogin() {
         {/* <p>Already logged in? <span onClick={alreadyLogged} style={{ color: "red", cursor: "pointer" }}>Click here</span> </p> */}
       </div>
     </>
-
   );
 }
 

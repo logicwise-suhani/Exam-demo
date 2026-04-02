@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
 import { useTimer } from "../hooks/useTimer";
-import Buttons from "./Reusable components/Buttons";
+import Buttons from "./layout/Buttons";
 import useQuestion from "../hooks/useQuestion";
-import Options from "./Reusable components/Options";
+import Options from "./layout/Options";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
