@@ -59,16 +59,6 @@ function TeachLogin() {
     return;
   }, [navigate]);
 
-  // const alreadyLogged = () => {
-  //   const logged = localStorage.getItem("user");
-
-  //   if (logged) {
-  //     navigate("/createSubject");
-  //   } else {
-  //     alert("Please Login!")
-  //   }
-  // }
-
   const isTeachValid =
     Object.keys(errors).length === 0 &&
     data.email &&
@@ -85,10 +75,10 @@ function TeachLogin() {
           value={data.email}
           onChange={handleInputChange}
           onBlur={handleBlur}
-        /> {" "}
-        <span>{touched.email && errors.email}</span>
+        /> <br />
+        <span style={{ color: "red" }}>{touched.email && errors.email}</span>
 
-        <br /> <br />
+        <br />
         <input
           type="password"
           placeholder="Enter password"
@@ -96,8 +86,8 @@ function TeachLogin() {
           value={data.password}
           onChange={handleInputChange}
           onBlur={handleBlur}
-        /> {" "}
-        <span>{touched.password && errors.password}</span>
+        /> <br />
+        <span style={{ color: "red" }}>{touched.password && errors.password}</span>
 
         <br />
         {loginError && (
@@ -109,8 +99,6 @@ function TeachLogin() {
         <button onClick={handleLogin} disabled={!isTeachValid}>
           Login
         </button> {" "}
-
-        {/* <p>Already logged in? <span onClick={alreadyLogged} style={{ color: "red", cursor: "pointer" }}>Click here</span> </p> */}
       </div>
     </>
   );

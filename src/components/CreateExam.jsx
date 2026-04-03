@@ -120,7 +120,6 @@ function CreateExam() {
         if (!isValid) return;
 
         const newQuestion = buildQuestion();
-
         const updatedQuestions = saveQuestion(form.questions, currentIndex, newQuestion);
 
         if (currentIndex === 14) {
@@ -151,7 +150,6 @@ function CreateExam() {
                 timeSpent: ""
             }));
         }
-
         setErrors({});
     };
 
@@ -236,7 +234,6 @@ function CreateExam() {
                             onChange={(e) => updateOption(index, e.target.value)}
                             onBlur={(e) => validateOption(index, e.target.value)}
                         />
-
                         {errors[`option${index}`] && (<p style={{ color: "red" }}>{errors[`option${index}`]}</p>)}
                     </div>
                 ))}

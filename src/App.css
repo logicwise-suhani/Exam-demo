@@ -5,6 +5,29 @@
   /* text-align: center; */
 }
 
+.auth button {
+  margin-left: 400px;
+}
+
+.auth p {
+  margin-bottom: 60px;
+}
+
+.icon {
+  font-size: 50px;
+}
+
+td.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  color: gray;
+}
+
+td.enabled {
+  cursor: pointer;
+  color: yellow;
+}
+
 .preview-container h2 {
   text-align: center;
   display: flex;

@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
 import Buttons from "./layout/Buttons";
-
+ 
 function Preview() {
     const { subjectId } = useParams();
     const navigate = useNavigate();
@@ -22,15 +22,11 @@ function Preview() {
         }
     }, [location.state]);
 
-    const totalTime = previewData.reduce(
-        (acc, item) => acc + Number(item.timeTaken || 0), 0);
-
     const handleSave = () => {
         if (!previewData || (Array.isArray(previewData) && previewData.length === 0)) {
             alert("Empty Test can't be submitted!");
             return;
         }
-
         localStorage.setItem(`exam_${subjectId}`, JSON.stringify(previewData));
         alert("Exam Saved Successfully!");
     };
@@ -42,12 +38,12 @@ function Preview() {
     };
 
     const handleDelete = () => {
-        const data = localStorage.getItem(`exam_${subjectId}`, JSON.stringify(previewData));
-        if (data) {
-            localStorage.removeItem(`exam_${subjectId}`);
-        }
-        navigate(`/create-exam/${subjectId}`)
+        localStorage.removeItem(`exam_${subjectId}`);
+        navigate(`/create-exam/${subjectId}`, { replace: true })
     }
+
+    const totalTime = (Array.isArray(previewData) ? previewData : []).reduce(
+        (acc, item) => acc + Number(item?.timeTaken || 0), 0);
 
     return (
         <>
@@ -58,7 +54,7 @@ function Preview() {
                 {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)}</h3>}
 
                 <div className={previewData.length === 0 ? "" : "preview"}>
-                    {previewData.map((item, index) => (
+                    {previewData ? previewData.map((item, index) => (
                         <div key={index}>
                             <h4>{index + 1}. {item.question} </h4>
 
@@ -68,7 +64,7 @@ function Preview() {
                                 </div>
                             ))}
                         </div>
-                    ))}
+                    )) : ""}
                 </div >
             </div>
             <div className="preview-buttons">

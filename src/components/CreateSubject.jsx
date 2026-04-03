@@ -6,16 +6,14 @@ function CreateSubject() {
     const [show, setShow] = useState(false)
     const [addSubject, setAddSubject] = useState("");
     const [listSubject, setListSubject] = useState([]);
-    const [error, setError] = useState(""); 
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const handlePopState = () => {
-            window.history.pushState(null, document.title, window.location.href);
+            window.history.go(1);
         };
-
-        window.history.pushState(null, document.title, window.location.href);
         window.addEventListener("popstate", handlePopState);
-
+        window.history.pushState(null, "", window.location.href);
         return () => {
             window.removeEventListener("popstate", handlePopState);
         };
@@ -42,7 +40,6 @@ function CreateSubject() {
         }
 
         const subject = addSubject.trim();
-
         if (!subject) {
             setError("Subject name is required");
             return;
@@ -56,14 +53,18 @@ function CreateSubject() {
         const isDuplicate = listSubject.some(
             (item) => item.subject.toLowerCase() === subject.toLowerCase()
         );
-
         if (isDuplicate) {
             setError("Subject already exists");
             return;
         }
 
-        setError("");
+        const valid = /^[A-Za-z0-9 .\s]+$/;
+        if (!valid.test(subject)) {
+            setError("Invalid characters");
+            return;
+        }
 
+        setError("");
         let getSubList = [...listSubject]
 
         const sub = {
@@ -123,13 +124,11 @@ function CreateSubject() {
 
             <div className="create-subject">
                 {show && (
-                    <>
-                        <input
-                            placeholder="Enter Subject"
-                            value={addSubject}
-                            onChange={(e) => setAddSubject(e.target.value)}
-                        />
-                    </>
+                    <input
+                        placeholder="Enter Subject"
+                        value={addSubject}
+                        onChange={(e) => setAddSubject(e.target.value)}
+                    />
                 )}{" "}
 
                 <button onClick={showAndAddSubject}>{show ? 'Add' : 'Create Subject'}</button>
@@ -148,11 +147,18 @@ function CreateSubject() {
                         {
                             listSubject.length ?
                                 listSubject?.map(({ id, subject }, index) => {
+                                    const examExists = localStorage.getItem(`exam_${id}`);
                                     return (
                                         <tr key={index}>
                                             <td>{id}</td>
                                             <td>{subject}</td>
-                                            <td onClick={() => navigate(`/create-exam/${id}`)} style={{ cursor: "pointer", color: "yellow" }}>
+                                            <td onClick={() => {
+                                                if (examExists) {
+                                                    alert("Exam already created");
+                                                    return;
+                                                }
+                                                navigate(`/create-exam/${id}`);
+                                            }} className={examExists ? "disabled" : "enabled"}>
                                                 Create Exam
                                             </td>
                                             <td onClick={() => handleDelete(id)} style={{ cursor: "pointer", color: "red" }}>

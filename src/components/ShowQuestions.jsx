@@ -159,7 +159,7 @@ function ShowQuestions() {
         localStorage.setItem("selectedSubjectId", subjectId);
         dialogRef.current.close();
 
-        navigate(`/thank-you/${subjectId}`, {
+        navigate("/result", {
             state: { remainingTime: timer.dialogTimeLeft }
         });
     };

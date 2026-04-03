@@ -15,11 +15,36 @@ function Result() {
         return subjectId || localStorage.getItem("selectedSubjectId") || "";
     });
     const subName = useSubjectName(selected);
+    const [testData, setTestData] = useState(null);
+
+    useEffect(() => {
+        if (!selected) return;
+
+        const data = localStorage.getItem(`test_${selected}`);
+        try {
+            setTestData(data ? JSON.parse(data) : null);
+        } catch {
+            setTestData(null);
+        }
+    }, [selected]);
 
     useEffect(() => {
         if (selected) {
             localStorage.setItem("selectedSubjectId", selected);
         }
+    }, [selected]);
+
+    useEffect(() => {
+        if (!selected) return;
+
+        const end = localStorage.getItem(`endTime_${selected}`);
+        if (!end) {
+            setTimeLeft(0);
+            return;
+        }
+
+        const remaining = Math.max(0, Math.floor((Number(end) - Date.now()) / 1000));
+        setTimeLeft(remaining);
     }, [selected]);
 
     useTimer(selected, () => {
@@ -28,9 +53,10 @@ function Result() {
             setTimeLeft(0);
             return;
         }
+
         const remaining = Math.max(0, Math.floor((Number(end) - Date.now()) / 1000));
-        setTimeLeft(remaining);
-    })
+        setTimeLeft((prev) => (prev !== remaining ? remaining : prev));
+    });
 
     const handleResult = () => {
         if (!selected) {
@@ -38,27 +64,17 @@ function Result() {
             return;
         }
 
-        const result = localStorage.getItem(`test_${selected}`);
-        if (!result) {
+        if (!testData) {
             alert("No result found for this subject");
             return;
         }
 
-        let resArray = [];
-        try {
-            resArray = JSON.parse(result);
-        } catch {
-            alert("Invalid result data");
-            return;
-        }
-
         let totalScore = 0;
-        resArray.forEach((t) => {
-            if (t.correctAnswer === t.selectedAnswer) {
-                totalScore += 1;
+        for (let i = 0; i < testData.length; i++) {
+            if (testData[i].correctAnswer === testData[i].selectedAnswer) {
+                totalScore++;
             }
-        });
-
+        }
         setScore(totalScore);
     };
 
@@ -73,8 +89,7 @@ function Result() {
         }
         dialogRef.current?.close();
     };
-
-    const hasResult = selected && !!localStorage.getItem(`test_${selected}`);
+    const hasResult = !!testData;
 
     const subjects = useMemo(() => {
         try {
@@ -97,14 +112,12 @@ function Result() {
                     value={selected}
                     onChange={(e) => setSelected(e.target.value)}
                 >
-                    {/* <option value="">Select Subject</option> */}
                     {subjects.map((item) => (
                         <option key={item.id} value={item.id}>
                             {item.subject}
                         </option>
                     ))}
                 </select>{" "}
-
 
                 {timeLeft > 0 ? (
                     <p>Result in: {formatTime(timeLeft)}</p>
@@ -114,8 +127,9 @@ function Result() {
                     <p>No result available</p>
                 )}
             </div>
-            <br /><br />
-            <Buttons onClick={() => navigate(-1)} /> {" "}
+
+            <br />
+            <Buttons onClick={() => navigate(-1)} />{" "}
 
             <dialog ref={dialogRef} className="score-dialog">
                 <p>Subject: {subName}</p>

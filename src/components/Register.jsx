@@ -21,7 +21,6 @@ function Register() {
             errors.password =
                 "Password must be 8+ chars, include upper, lower & number";
         }
-
         return errors;
     };
 
@@ -67,10 +66,10 @@ function Register() {
                     value={data.email}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                />
-                <span>{touched.email && errors.email}</span>
+                /> <br />
+                <span style={{ color: "red" }}>{touched.email && errors.email}</span>
 
-                <br /> <br />
+                <br />
                 <input
                     type="password"
                     name="password"
@@ -78,8 +77,8 @@ function Register() {
                     value={data.password}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                />
-                <span>{touched.password && errors.password}</span>
+                /> <br />
+                <span style={{ color: "red" }}>{touched.password && errors.password}</span>
 
                 <br /> <br />
                 <button onClick={handleRegister} disabled={!isValid}>

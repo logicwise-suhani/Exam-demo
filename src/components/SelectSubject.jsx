@@ -9,21 +9,27 @@ function SelectSubject() {
 
     useEffect(() => {
         const handlePopState = () => {
-            window.history.pushState(null, document.title, window.location.href);
+            window.history.go(1);
         };
-
-        window.history.pushState(null, document.title, window.location.href);
-        window.addEventListener('popstate', handlePopState);
-
+        window.addEventListener("popstate", handlePopState);
+        window.history.pushState(null, "", window.location.href);
         return () => {
-            window.removeEventListener('popstate', handlePopState);
+            window.removeEventListener("popstate", handlePopState);
         };
     }, []);
 
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
         if (subjectList !== "null" && subjectList?.length > 0) {
-            setSubjects(JSON.parse(subjectList))
+            const parsedSubjects = JSON.parse(subjectList);
+
+            const filterSubjects = parsedSubjects.filter((subject) => {
+                const hasExam = localStorage.getItem(`exam_${subject.id}`);
+                if (!hasExam) return;
+                const parsedExam = JSON.parse(hasExam);
+                return Array.isArray(parsedExam) && parsedExam.length > 0;
+            })
+            setSubjects(filterSubjects);
         }
         const name = JSON.parse(localStorage.getItem("user")) || [];
         if (name?.email) {
@@ -37,14 +43,16 @@ function SelectSubject() {
             alert("Already attempted!")
             return;
         }
-
         localStorage.setItem("currentSubjectId", id);
         navigate(`/showQues/${id}`);
     }
 
     const handleLogOut = () => {
-        localStorage.removeItem("user");
-        navigate("/login");
+        const confirmLogOut = confirm("Are you sure want to logOut?");
+        if (confirmLogOut) {
+            localStorage.removeItem("user");
+            navigate("/login");
+        }
     }
 
     return (
@@ -58,14 +66,23 @@ function SelectSubject() {
                 </div>
             </nav>
 
-            <h3>Choose your Exam</h3>
-            <div className="select-subject">
-                {subjects.map((item) => (
-                    <div key={item.id}>
-                        <label onClick={() => handleClick(item.id)}> {item.subject}</label>
+            {subjects.length > 0 ?
+                <>
+                    <h3>Available Exams</h3>
+                    <div className="select-subject">
+                        {subjects.map((item) => (
+                            <div key={item.id}>
+                                <label onClick={() => handleClick(item.id)}> {item.subject}</label>
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
+                </>
+                :
+                <>
+                    <h3>No exams available</h3>
+                    <p>Check back later for new examinations</p>
+                </>
+            }
         </>
     )
 }

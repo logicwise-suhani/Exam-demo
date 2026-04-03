@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import './App.css'
 import Home from "./components/Home";
 import Login from "./components/Login";
@@ -11,15 +11,13 @@ import { PublicRoute } from "./routes/PublicRoute";
 import Preview from "./components/Preview";
 import SelectSubject from "./components/SelectSubject";
 import SavedQuestions from "./components/ShowQuestions";
-import ThankYou from "./components/ThankYou";
 import Result from "./components/Result";
+import Auth from "./routes/authRoutes/Auth";
 
 function App() {
-  const navigate = useNavigate();
 
   return (
     <>
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={
@@ -29,32 +27,17 @@ function App() {
         } />
 
         <Route path="/register" element={<Register />} />
-        <Route path="/unauthorized" element={
-          <>
-            <h2>Not allowed</h2> <br />
-            <button onClick={() => navigate("/")}>Back</button>
-          </>
-        } />
+        <Route path="/unauthorized" element={<Auth />} />
         <Route path="/teacher-login" element={<TeachLogin />} />
 
-        <Route path="/create-exam/:subjectId" element={
-          <PrivateRoute allowedRoles={["teacher"]}>
-            <CreateExam /> 
-          </PrivateRoute>} />
+        <Route element={<PrivateRoute allowedRoles={["teacher"]} />}>
+          <Route path="/create-exam/:subjectId" element={<CreateExam />} />
+          <Route path="/preview/:subjectId" element={<Preview />} />
+          <Route path="/createSubject" element={<CreateSubject />} />
+        </Route>
 
-        <Route path="/preview/:subjectId" element={<Preview />} />
         <Route path="/showQues/:subjectId" element={<SavedQuestions />} />
-        <Route path="/thank-you/:subjectId" element={<ThankYou />} />
         <Route path="/result" element={<Result />} />
-
-        <Route
-          path="/createSubject"
-          element={
-            <PrivateRoute allowedRoles={["teacher"]}>
-              <CreateSubject />
-            </PrivateRoute>
-          }
-        />
 
         <Route
           path="/selectSubject"
@@ -62,10 +45,8 @@ function App() {
             <PrivateRoute allowedRoles={["student"]}>
               <SelectSubject />
             </PrivateRoute>
-
           }
         />
-
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>

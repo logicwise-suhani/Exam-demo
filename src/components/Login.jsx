@@ -71,7 +71,7 @@ function Login() {
     Object.keys(errors).length === 0 &&
     data.email && data.password;
 
-  return (
+  return ( 
     <div>
       <h2>Login</h2>
 
