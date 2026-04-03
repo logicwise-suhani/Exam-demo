@@ -100,6 +100,10 @@ function ShowQuestions() {
         localStorage.setItem(`submitted_${subjectId}`, "true");
         dialogRef.current?.showModal();
 
+        const duration = 300;
+        const endTime = Date.now() + duration * 1000;
+        localStorage.setItem(`endTime_${subjectId}`, endTime);
+
         setTimer(prev => ({
             ...prev,
             dialogTimeLeft: 300,
@@ -152,9 +156,6 @@ function ShowQuestions() {
             ...prev,
             isDialogRunning: false
         }));
-        const duration = 300;
-        const endTime = Date.now() + duration * 1000;
-        localStorage.setItem(`endTime_${subjectId}`, endTime);
 
         localStorage.setItem("selectedSubjectId", subjectId);
         dialogRef.current.close();
@@ -163,6 +164,7 @@ function ShowQuestions() {
             state: { remainingTime: timer.dialogTimeLeft }
         });
     };
+
 
     return (
         <>
@@ -209,6 +211,7 @@ function ShowQuestions() {
             {displayQuestions.length > 0 ? "" : <Buttons onClick={() => navigate("/selectSubject")} />}
 
             <dialog ref={dialogRef} className="dialog-box">
+                <h3>Thank you for giving exam!</h3>
                 <p>Result in: {formatTime(timer.dialogTimeLeft)}</p>
                 <Buttons onClick={handleDialogClose} label="Close" />
             </dialog>

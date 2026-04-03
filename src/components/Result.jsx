@@ -110,8 +110,7 @@ function Result() {
             <div className="drop-down">
                 <select
                     value={selected}
-                    onChange={(e) => setSelected(e.target.value)}
-                >
+                    onChange={(e) => setSelected(e.target.value)}>
                     {subjects.map((item) => (
                         <option key={item.id} value={item.id}>
                             {item.subject}
