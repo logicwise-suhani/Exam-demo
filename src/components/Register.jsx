@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import useFormValidation from "../hooks/useError";;
+import useFormValidation from "../hooks/useError"; import Buttons from "./layout/Buttons";
+;
 
 function Register() {
     const navigate = useNavigate();
@@ -81,6 +82,7 @@ function Register() {
                 <span style={{ color: "red" }}>{touched.password && errors.password}</span>
 
                 <br /> <br />
+                <Buttons onClick={() => navigate(-1)} /> {" "}
                 <button onClick={handleRegister} disabled={!isValid}>
                     Register
                 </button>
