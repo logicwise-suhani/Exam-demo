@@ -10,7 +10,7 @@ function TeachLogin() {
     email: "",
     password: ""
   }, teachValidate);
-
+ 
   const teacherEmail = "teacher@teach.com";
   const teacherPassword = "Te111111";
 

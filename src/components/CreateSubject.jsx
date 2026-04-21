@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux';
+import { setSubjects } from "../features/subject/subjectSlice";
 
 function CreateSubject() {
     const navigate = useNavigate();
     const [show, setShow] = useState(false)
     const [addSubject, setAddSubject] = useState("");
-    const [listSubject, setListSubject] = useState([]);
     const [error, setError] = useState("");
-
+    const listSubject = useSelector((s) => s.subjects.subjects);
+    const dispatch = useDispatch();
+ 
     useEffect(() => {
         const handlePopState = () => {
             window.history.go(1);
@@ -22,9 +25,9 @@ function CreateSubject() {
     useEffect(() => {
         const subjectList = localStorage.getItem("subjects");
         if (subjectList !== "null" && subjectList?.length > 0) {
-            setListSubject(JSON.parse(subjectList))
+            dispatch(setSubjects(JSON.parse(subjectList)));
         }
-    }, []);
+    }, [dispatch]);
 
     const updateIDs = (list) => {
         return list.map((item, index) => ({
@@ -32,7 +35,7 @@ function CreateSubject() {
             id: index + 1
         }))
     }
-
+ 
     const showAndAddSubject = () => {
         if (!show) {
             setShow(true);
@@ -65,15 +68,14 @@ function CreateSubject() {
         }
 
         setError("");
-        let getSubList = [...listSubject]
 
-        const sub = {
-            id: getSubList.length + 1,
-            subject: addSubject.trim()
-        }
-        getSubList.push(sub)
-        const updatedList = updateIDs(getSubList);
-        setListSubject(updatedList)
+        const newList = [...listSubject, {
+            id: listSubject.length + 1,
+            subject
+        }];
+
+        const updatedList = updateIDs(newList);
+        dispatch(setSubjects(updatedList));
         localStorage.setItem("subjects", JSON.stringify(updatedList))
         setAddSubject("")
         setShow(false);
@@ -84,7 +86,7 @@ function CreateSubject() {
         if (confirmDelete) {
             const updatedList = listSubject.filter(subject => subject.id !== id);
             const reassign = updateIDs(updatedList);
-            setListSubject(reassign);
+            dispatch(setSubjects(reassign));
             localStorage.setItem("subjects", JSON.stringify(reassign));
             localStorage.removeItem(`exam_${id}`);
         }

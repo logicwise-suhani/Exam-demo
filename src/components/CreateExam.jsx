@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSubjectName } from "../hooks/useSubjectName";
 import Buttons from './layout/Buttons';
+import { useDispatch, useSelector } from "react-redux";
+import { setExam, addQuestion, updateQuestion } from '../features/exams/examSlice';
 
 function CreateExam() {
     const { subjectId } = useParams();
@@ -13,14 +15,18 @@ function CreateExam() {
         ques: "",
         options: ["", "", "", ""],
         correctOption: null,
-        timeSpent: "",
-        questions: []
+        timeSpent: ""
     });
     const [errors, setErrors] = useState({});
+
+    const questions = useSelector((state) => state.exam.exams[subjectId] || []);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const data = location.state?.examData;
         if (!data || data.length === 0) return;
+
+        dispatch(setExam({ subjectId, questions: data }));
 
         if (data.length > 0) {
             const lastIndex = data.length - 1;
@@ -32,16 +38,15 @@ function CreateExam() {
                 options: last.options,
                 correctOption: last.correctAnswer,
                 timeSpent: last.timeTaken,
-                questions: data
             });
         }
-    }, [location.state]);
+    }, [location.state, dispatch, subjectId]);
 
     useEffect(() => {
         const savedData = localStorage.getItem(`exam_${subjectId}`);
         if (savedData) {
             const parsed = JSON.parse(savedData);
-            setForm(prev => ({ ...prev, questions: parsed }))
+            setForm(prev => ({ ...prev, questions: parsed }));
         }
     }, [subjectId]);
 
@@ -84,17 +89,6 @@ function CreateExam() {
         form.options.every(opt => opt.trim() !== "") &&
         form.timeSpent !== ""
 
-    const saveQuestion = (list, index, question) => {
-        const updated = [...list];
-
-        if (updated[index]) {
-            updated[index] = question;
-        } else {
-            updated.push(question);
-        }
-        return updated;
-    };
-
     const updateOption = (index, value) => {
         const updated = [...form.options];
         updated[index] = value;
@@ -120,7 +114,20 @@ function CreateExam() {
         if (!isValid) return;
 
         const newQuestion = buildQuestion();
-        const updatedQuestions = saveQuestion(form.questions, currentIndex, newQuestion);
+
+        if (questions[currentIndex]) {
+            dispatch(updateQuestion({
+                subjectId,
+                index: currentIndex,
+                question: newQuestion
+            }));
+        }
+        else {
+            dispatch(addQuestion({
+                subjectId,
+                question: newQuestion
+            }))
+        }
 
         if (currentIndex === 14) {
             alert("End of Question creation");
@@ -130,20 +137,17 @@ function CreateExam() {
         const nextIndex = currentIndex + 1;
         setCurrentIndex(nextIndex);
 
-        if (updatedQuestions[nextIndex]) {
-            const nextQues = updatedQuestions[nextIndex];
-
+        const nextQues = questions[nextIndex];
+        if (nextQues) {
             setForm({
                 ques: nextQues.question,
                 options: nextQues.options,
                 correctOption: nextQues.correctAnswer,
-                timeSpent: nextQues.timeTaken,
-                questions: updatedQuestions
+                timeSpent: nextQues.timeTaken
             });
         } else {
             setForm(prev => ({
                 ...prev,
-                questions: updatedQuestions,
                 ques: "",
                 options: ["", "", "", ""],
                 correctOption: null,
@@ -160,7 +164,7 @@ function CreateExam() {
         }
 
         const prevIndex = currentIndex - 1;
-        const prevQuestion = form.questions[prevIndex];
+        const prevQuestion = questions[prevIndex];
 
         if (!prevQuestion) return;
         setCurrentIndex(prevIndex);
@@ -177,14 +181,19 @@ function CreateExam() {
     const previewQuestions = () => {
         const lastQuestion = buildQuestion();
 
-        const updatedQuestions = saveQuestion(form.questions, currentIndex, lastQuestion);
-        setForm(prev => ({
-            ...prev,
-            questions: updatedQuestions
-        }));
+        const updated = [...questions];
+
+        if (updated[currentIndex]) {
+            updated[currentIndex] = lastQuestion;
+        }
+        else {
+            updated.push(lastQuestion);
+        }
+
+        dispatch(setExam({ subjectId, questions: updated }));
 
         navigate(`/preview/${subjectId}`, {
-            state: { examData: updatedQuestions }
+            state: { examData: updated }
         });
     };
 

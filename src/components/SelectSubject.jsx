@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Buttons from "./layout/Buttons";
+import { useSelector, useDispatch } from "react-redux";
+import { setSubjects } from "../features/subject/subjectSlice";
 
 function SelectSubject() {
     const navigate = useNavigate();
-    const [subjects, setSubjects] = useState([]);
     const [userName, setUserName] = useState("");
+    const subject = useSelector((s) => s.subjects.subjects);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const handlePopState = () => {
@@ -29,13 +32,13 @@ function SelectSubject() {
                 const parsedExam = JSON.parse(hasExam);
                 return Array.isArray(parsedExam) && parsedExam.length > 0;
             })
-            setSubjects(filterSubjects);
+            dispatch(setSubjects(filterSubjects));
         }
         const name = JSON.parse(localStorage.getItem("user")) || [];
         if (name?.email) {
             setUserName(name.email)
         }
-    }, []);
+    }, [dispatch]);
 
     const handleClick = (id) => {
         const test = localStorage.getItem(`test_${id}`);
@@ -66,11 +69,11 @@ function SelectSubject() {
                 </div>
             </nav>
 
-            {subjects.length > 0 ?
+            {subject.length > 0 ?
                 <>
                     <h3>Available Exams</h3>
                     <div className="select-subject">
-                        {subjects.map((item) => (
+                        {subject.map((item) => (
                             <div key={item.id}>
                                 <label onClick={() => handleClick(item.id)}> {item.subject}</label>
                             </div>
@@ -84,7 +87,7 @@ function SelectSubject() {
                 </>
             }
         </>
-    )
+    ) 
 }
 
 export default SelectSubject;

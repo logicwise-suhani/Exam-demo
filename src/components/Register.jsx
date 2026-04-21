@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import useFormValidation from "../hooks/useError"; import Buttons from "./layout/Buttons";
-;
 
 function Register() {
     const navigate = useNavigate();
@@ -11,7 +10,7 @@ function Register() {
 
     function validate(values) {
         const errors = {};
-
+ 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(values.email)) {
             errors.email = "Invalid email address";

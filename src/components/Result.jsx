@@ -99,6 +99,7 @@ function Result() {
         }
     }, []);
 
+
     return (
         <>
             <nav className="navbar-ques">

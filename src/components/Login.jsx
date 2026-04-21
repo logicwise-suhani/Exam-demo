@@ -10,7 +10,7 @@ function Login() {
     email: "",
     password: ""
   }, validate);
-
+ 
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("user"));
 

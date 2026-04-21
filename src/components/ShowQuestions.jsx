@@ -4,26 +4,30 @@ import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
 import { useTimer } from "../hooks/useTimer";
 import Buttons from "./layout/Buttons";
-import useQuestion from "../hooks/useQuestion";
 import Options from "./layout/Options";
+import { useDispatch, useSelector } from "react-redux";
+import { startAttempt, selectAnswer, nextQuestion, tickDialogTimer, tickTimer, startDialogTimer, submitExam } from "../features/exams/examSlice";
 
 function ShowQuestions() {
     const { subjectId } = useParams();
     const navigate = useNavigate();
     const dialogRef = useRef();
     const subName = useSubjectName();
-    const { currentIndex, answers, error, selectAnswer, next } = useQuestion();
     const [savedData, setSavedData] = useState([]);
-    const [displayQuestions, setDisplayQuestions] = useState([]);
-    const [show, setShow] = useState(false);
-    const [timer, setTimer] = useState({
-        timeLeft: 0,
-        isRunning: false,
-        dialogTimeLeft: 0,
-        isDialogRunning: false
-    })
     const userName = JSON.parse(localStorage.getItem("user"))?.email || [];
-    const isSubmitted = localStorage.getItem(`submitted_${subjectId}`) === "true";
+    const dispatch = useDispatch();
+    const attempt = useSelector((state) => state.exam.attempts[subjectId]);
+    const {
+        questions = [],
+        currentIndex = 0,
+        answers = [],
+        timeLeft = 0,
+        dialogTimeLeft = 0,
+        isRunning = false,
+        isDialogRunning = false,
+        submitted,
+        error = null
+    } = attempt || {};
 
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
@@ -31,18 +35,18 @@ function ShowQuestions() {
     }, [subjectId]);
 
     useEffect(() => {
-        if (!show) return;
+        if (!attempt) return;
 
         const examState = {
-            displayQuestions,
+            questions,
             currentIndex,
-            timeLeft: timer.timeLeft,
+            timeLeft: timeLeft,
             answers,
-            isRunning: timer.isRunning
+            isRunning: isRunning
         };
         localStorage.setItem(`exam_state_${subjectId}`, JSON.stringify(examState));
 
-    }, [displayQuestions, currentIndex, answers, show, subjectId, timer.timeLeft, timer.isRunning]);
+    }, [questions, currentIndex, answers, attempt, subjectId, timeLeft, isRunning]);
 
     const generateQuestions = () => {
         if (savedData.length === 0) {
@@ -50,47 +54,35 @@ function ShowQuestions() {
             return;
         }
         const shuffled = [...savedData].sort(() => 0.5 - Math.random());
-
         const randomEight = shuffled.slice(0, 8);
-        setDisplayQuestions(randomEight);
 
-        setTimer(prev => ({
-            ...prev,
-            isRunning: true,
-            timeLeft: randomEight[0].timeTaken
+        dispatch(startAttempt({
+            subjectId,
+            questions: randomEight
         }));
-        setShow(true);
 
         localStorage.setItem("randomEight", JSON.stringify(randomEight));
     };
 
     const getResult = useCallback(
         () => {
-            return displayQuestions.map((q, index) => ({
+            return questions.map((q, index) => ({
                 correctAnswer: q.correctAnswer,
                 selectedAnswer: answers[index],
             }));
-        }, [answers, displayQuestions])
+        }, [answers, questions])
 
-    useTimer(timer.isRunning, () => {
-        setTimer(prev => ({
-            ...prev,
-            timeLeft: prev.timeLeft - 1
-        }));
+    useTimer(isRunning, () => {
+        dispatch(tickTimer({ subjectId }));
     })
-    useTimer(timer.isDialogRunning, () => {
-        if (timer.dialogTimeLeft <= 0) {
-            setTimer(prev => ({
-                ...prev,
-                isDialogRunning: false
-            }));
+
+    useTimer(isDialogRunning, () => {
+        if (dialogTimeLeft <= 0) {
+            dispatch(submitExam({ subjectId }));
             navigate(`/thank-you/${subjectId}`);
             return;
         }
-        setTimer(prev => ({
-            ...prev,
-            dialogTimeLeft: prev.dialogTimeLeft - 1
-        }));
+        dispatch(tickDialogTimer({ subjectId }));
     })
 
     const submit = useCallback(() => {
@@ -104,74 +96,54 @@ function ShowQuestions() {
         const endTime = Date.now() + duration * 1000;
         localStorage.setItem(`endTime_${subjectId}`, endTime);
 
-        setTimer(prev => ({
-            ...prev,
-            dialogTimeLeft: 300,
-            isDialogRunning: true,
-            isRunning: false
-        }));
-    }, [getResult, subjectId])
+        dispatch(startDialogTimer({ subjectId }));
+    }, [getResult, subjectId, dispatch])
 
     useEffect(() => {
-        if (!timer.isRunning || timer.timeLeft > 0) return;
+        if (!isRunning || timeLeft > 0) return;
 
         const nextIndex = currentIndex + 1;
-        if (nextIndex >= displayQuestions.length) {
+        if (nextIndex >= questions.length) {
             submit();
             return;
         }
 
-        next(displayQuestions, true);
-        setTimer(prev => ({
-            ...prev,
-            timeLeft: displayQuestions[nextIndex].timeTaken
-        }));
-    }, [timer.timeLeft, timer.isRunning, currentIndex, displayQuestions, submit, next]);
+        dispatch(nextQuestion({ subjectId, force: true }));
+    }, [timeLeft, isRunning, currentIndex, questions.length, subjectId, submit, dispatch]);
 
     useEffect(() => {
-        if (isSubmitted) {
+        if (submitted) {
             navigate("/selectSubject");
         }
-    }, [navigate, isSubmitted]);
+    }, [navigate, submitted]);
 
     const handleSubmit = () => {
-        if (isSubmitted) return;
+        if (submitted) return;
         if (!confirm("Are you sure want to Submit?")) return;
         submit();
     };
 
     const handleNext = () => {
-        const moved = next(displayQuestions);
-        if (moved) {
-            const nextIndex = currentIndex + 1;
-            setTimer(prev => ({
-                ...prev,
-                timeLeft: displayQuestions[nextIndex].timeTaken
-            }));
-        }
+        dispatch(nextQuestion({ subjectId }));
     };
 
     const handleDialogClose = () => {
-        setTimer(prev => ({
-            ...prev,
-            isDialogRunning: false
-        }));
+        dispatch(submitExam({ subjectId }));
 
         localStorage.setItem("selectedSubjectId", subjectId);
         dialogRef.current.close();
 
         navigate("/result", {
-            state: { remainingTime: timer.dialogTimeLeft }
+            state: { remainingTime: dialogTimeLeft }
         });
     };
-
 
     return (
         <>
             <nav className="navbar-ques">
 
-                <div className="nav-left"> {!show ? <button onClick={generateQuestions}>Start Exam</button>
-                    : displayQuestions.length > 0 && <p >Time left is : <span style={{ color: timer.timeLeft < 10 ? "red" : "" }}>{formatTime(timer.timeLeft)}</span> </p>} {" "}
+                <div className="nav-left"> {!attempt ? <button onClick={generateQuestions}>Start Exam</button>
+                    : questions.length > 0 && <p >Time left is : <span style={{ color: timeLeft < 10 ? "red" : "" }}>{formatTime(timeLeft)}</span> </p>} {" "}
                 </div>
 
                 <div className="nav-center">
@@ -179,40 +151,44 @@ function ShowQuestions() {
                 </div>
 
                 <div className="nav-right">
-                    {displayQuestions.length > 0 ? <button onClick={handleSubmit} disabled={isSubmitted}>{localStorage.getItem(`submitted_${subjectId}`)
+                    {questions.length > 0 ? <button onClick={handleSubmit} disabled={submitted}>{localStorage.getItem(`submitted_${subjectId}`)
                         ? "Submitted" : "Submit"}</button>
                         : <p>Logged as: {userName} </p>}
                 </div>
             </nav>
 
-            {displayQuestions.length === 0 && (
+            {questions.length === 0 && (
                 <h3 style={{ color: "yellow" }}>
                     {savedData.length === 0 ? "Questionnaire is empty!" : "Click Start to give Exam"}
                 </h3>
             )}
 
-            {displayQuestions.length > 0 && (
+            {questions.length > 0 && (
                 <div className="display-ques">
-                    <h4>{currentIndex + 1}. {displayQuestions[currentIndex].question}</h4>
+                    <h4>{currentIndex + 1}. {questions[currentIndex].question}</h4>
 
                     <Options
-                        options={displayQuestions[currentIndex].options}
+                        options={questions[currentIndex].options}
                         selected={answers[currentIndex]}
-                        onSelect={(i) => selectAnswer(currentIndex, i)}
+                        onSelect={(i) => dispatch(selectAnswer({
+                            subjectId,
+                            index: currentIndex,
+                            answer: i
+                        }))}
                     />
                     {error && <div style={{ color: "red" }}>{error}</div>}
                 </div>
             )} <br />
 
             <div className="show-next">
-                {displayQuestions.length > 0 && <button onClick={handleNext} disabled={currentIndex === displayQuestions.length - 1}>Next</button>}
+                {questions.length > 0 && <button onClick={handleNext} disabled={currentIndex === questions.length - 1}>Next</button>}
             </div>
 
-            {displayQuestions.length > 0 ? "" : <Buttons onClick={() => navigate("/selectSubject")} />}
+            {questions.length > 0 ? "" : <Buttons onClick={() => navigate("/selectSubject")} />}
 
             <dialog ref={dialogRef} className="dialog-box">
                 <h3>Thank you for giving exam!</h3>
-                <p>Result in: {formatTime(timer.dialogTimeLeft)}</p>
+                <p>Result in: {formatTime(dialogTimeLeft)}</p>
                 <Buttons onClick={handleDialogClose} label="Close" />
             </dialog>
         </>
