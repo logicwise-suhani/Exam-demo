@@ -42,7 +42,7 @@
   cursor: pointer;
 }
 
-.drop-down button{}
+.drop-down button {}
 
 .heading {
   display: flex;
@@ -57,7 +57,7 @@
 }
 
 .select-role {
-  background-color: whitesmoke;
+  background-color: var(--papaya);
   border-radius: 16px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);

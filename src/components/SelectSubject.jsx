@@ -63,7 +63,7 @@ function SelectSubject() {
             <nav className="navbar">
                 <button onClick={() => navigate("/result")} style={{ cursor: "pointer" }}>Result</button>
                 <p>Logged as: {userName}</p>
-                <Buttons onClick={handleLogOut} button="LogOut" />
+                <Buttons onClick={handleLogOut} label="LogOut" />
             </nav>
 
             {subject.length > 0 ?
