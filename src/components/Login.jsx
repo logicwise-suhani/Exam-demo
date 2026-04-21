@@ -10,7 +10,7 @@ function Login() {
     email: "",
     password: ""
   }, validate);
- 
+
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -71,11 +71,10 @@ function Login() {
     Object.keys(errors).length === 0 &&
     data.email && data.password;
 
-  return ( 
+  return (
     <div>
-      <h2>Login</h2>
-
       <div className="login">
+        <h2>Login</h2>
         <input
           placeholder="Enter email"
           name="email"
@@ -103,7 +102,7 @@ function Login() {
         <br />
         <Buttons onClick={() => navigate("/")} /> {" "}
         <button onClick={handleLogin} disabled={!isValid}> Login</button> {" "}
-        <p>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
+        <p style={{color: "var(--papaya)"}}>New student? {" "} <span onClick={() => navigate("/register")} style={{ color: "red", cursor: "pointer" }}>Register here</span></p>
       </div>
     </div>
   );

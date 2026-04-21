@@ -2,7 +2,11 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  /* text-align: center; */
+  --lava: #780000ff;
+  --brick-red: #c1121fff;
+  --papaya: #fdf0d5ff;
+  --space-blue: #003049ff;
+  --steel-blue: #669bbcff;
 }
 
 .auth button {
@@ -25,7 +29,7 @@ td.disabled {
 
 td.enabled {
   cursor: pointer;
-  color: yellow;
+  color: var(--papaya);
 }
 
 .preview-container h2 {
@@ -38,7 +42,7 @@ td.enabled {
 
 .preview {
   border-radius: 10px;
-  border: 2px solid pink;
+  border: 2px solid var(--papaya);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -65,7 +69,8 @@ td.enabled {
 }
 
 .preview-back button:hover {
-  background-color: pink;
+  /* background-color: pink; */
+  background-color: whitesmoke;
   color: black;
 }
 
@@ -77,23 +82,24 @@ td.enabled {
 }
 
 li::before {
-  content: "▶";
-  color: white;
+  content: "●";
+  color: var(--steel-blue);
   margin-right: 10px;
 }
 
 li.correct {
-  color: green;
+  color: lime;
 }
 
 li.correct::before {
-  color: green;
+  color: lime;
 }
 
 .create-exam {
   padding: 10px 10px;
   text-align: center;
-  border: 1px solid white;
+  border: 2px solid var(--papaya);
+  border-radius: 10px;
   width: 600px;
   gap: 80px;
 }
@@ -110,10 +116,11 @@ h3 {
 .create-exam textarea {
   height: 20px;
   width: 200px;
-  border: 2px solid #ba3f8bb9;
+  border: 2px solid var(--space-blue);
   border-radius: 7px;
-  background-color: rgb(255, 192, 203, 0.15);
+  background-color: var(--papaya);
   padding: 5px;
+  color: black;
 }
 
 .create-exam textarea {
@@ -138,19 +145,21 @@ h3 {
 }
 
 .radio-btn input[type="radio"] {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
+  border-radius: 10px;
   cursor: pointer;
+  appearance: none;
 }
 
-.create-subject input {
-  height: 30px;
+input[type="radio"]:checked {
+  border-color: lime;
 }
 
 .create-subject table {
   width: 250px;
   height: 200px;
-  border: 4px solid pink;
+  border: 4px solid var(--papaya);
   border-collapse: separate;
   border-radius: 10px;
   border-spacing: 0;
@@ -159,37 +168,45 @@ h3 {
   font-weight: 400;
 }
 
+.create-subject input {
+  height: 20px;
+  width: 200px;
+  border: 1px solid var(--papaya);
+  border-radius: 7px;
+  padding: 5px;
+  background-color: var(--papaya);
+  color: black;
+}
+
 .create-subject td {
   padding: 16px 32px;
   text-wrap: nowrap;
 }
 
 .create-subject thead {
-  color: pink;
+  color: white;
   font-weight: 600;
   font-size: 20px;
 }
 
 .select-subject {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
-  border: 1px solid white;
-  border-radius: 10px;
-  width: 600px;
-  height: 200px;
-  padding: 32px 0px;
+  gap: 30px;
   flex-wrap: wrap;
 }
 
-.select-subject label {
-  border: 2px solid pink;
-  padding: 16px 16px;
+.select-subject button {
+  border: 2px solid var(--papaya);
+  padding: 16px 160px;
   border-radius: 10px;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 600;
+  background-color: var(--papaya);
+  cursor: pointer;
+  color: var(--space-blue);
 }
 
 .select-btn {
@@ -208,12 +225,8 @@ h3 {
   align-items: center;
   padding: 15px 30px;
   gap: 30px;
-  background: linear-gradient(to right, #ef2a6200, #ba3f8bb9);
+  background-color: var(--space-blue);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.red-btn button {
-  color: red;
 }
 
 .navbar-ques {
@@ -225,7 +238,6 @@ h3 {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  background: linear-gradient(to right, #ef2a6200, #ba3f8bb9);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -251,14 +263,14 @@ h3 {
 .navbar-ques h2,
 .navbar-ques p {
   margin: 0;
-  color: white;
-  font-size: 20px;
+  color: var(--papaya);
+  font-size: 30px;
 }
 
 .navbar p {
   margin: 0;
   font-weight: 500;
-  color: white;
+  color: var(--papaya);
   font-size: 20px;
 }
 
@@ -270,22 +282,15 @@ h3 {
   margin-top: 20px;
 }
 
-.select-subject label {
-  cursor: pointer;
-  color: pink;
-}
-
 .select-btn {
   margin-top: 10px;
 }
 
 .display-ques {
   max-width: 700px;
-  margin: 120px auto 0;
-  padding: 25px;
+  padding: 50px;
   background: rgba(255, 255, 255, 0.08);
   border-radius: 12px;
-  color: white;
 }
 
 .display-ques h4 {
@@ -325,10 +330,9 @@ h3 {
   padding: 20px;
   border: none;
   border-radius: 8px;
-  background-color: pink;
-  color: crimson;
+  background-color: var(--steel-blue);
+  color: var(--space-blue);
   text-align: center;
-  border-color: pink;
 }
 
 .dialog-box::backdrop {
@@ -339,14 +343,14 @@ h3 {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
+  color: black;
 }
 
 .dialog-box button {
   padding: 8px 16px;
-  background-color: bisque;
+  background-color: var(--lava);
   border: none;
   cursor: pointer;
-  border-color: bisque;
 }
 
 .score-dialog {
@@ -355,9 +359,8 @@ h3 {
   padding-bottom: 20px;
   border: none;
   border-radius: 8px;
-  background-color: pink;
+  background-color: var(--steel-blue);
   color: black;
-  border-color: pink;
 }
 
 .score-dialog p {
@@ -371,7 +374,6 @@ h3 {
   background-color: bisque;
   border: none;
   cursor: pointer;
-  border-color: bisque;
   margin-left: 500px;
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   color: black;

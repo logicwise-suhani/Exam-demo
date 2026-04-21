@@ -4,13 +4,20 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background: linear-gradient(to right, #393d3e00, #ba3f8bb9);
+  color: white;
+  background-color: var(--space-blue);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: relative;
+  --lava: #780000ff;
+  --brick-red: #c1121fff;
+  --papaya: #fdf0d5ff;
+  --space-blue: #003049ff;
+  --steel-blue: #669bbcff;
+  --bg-color: #34314c;
+  --highlight-color: #ff7473;
 }
 
 .drop-down {
@@ -20,13 +27,13 @@
 }
 
 .drop-down select {
-  background-color: #ba3f8bb9;
+  background-color: var(--steel-blue);
   font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   font-weight: 800;
   font-size: 16px;
   border-radius: 10px;
-  border: 1px solid pink;
-  padding: 2px 30px 2px 10px;
+  border: 2px solid var(--steel-blue);
+  padding: 4px 30px 4px 10px;
   appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg fill='pink' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
@@ -34,6 +41,8 @@
   background-size: 20px;
   cursor: pointer;
 }
+
+.drop-down button{}
 
 .heading {
   display: flex;
@@ -43,45 +52,40 @@
   text-align: center;
 }
 
+.heading h1 {
+  color: white;
+}
+
 .select-role {
-  background: linear-gradient(to right bottom,
-      rgba(255, 255, 255, 0.3),
-      rgba(255, 255, 255, 0));
+  background-color: whitesmoke;
   border-radius: 16px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 20px;
   width: 300px;
-  color: white;
+  color: black;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
 
 .login input {
   height: 20px;
   width: 200px;
-  border: 2px solid #ba3f8bb9;
+  border: 1px solid var(--papaya);
   border-radius: 7px;
-  background-color: rgb(255, 192, 203, 0.15);
-}
-
-.create-subject input {
-  height: 20px;
-  width: 200px;
-  border: 2px solid #ba3f8bb9;
-  border-radius: 7px;
-  background-color: rgb(255, 192, 203, 0.15);
+  background-color: var(--papaya);
+  padding: 5px;
+  color: black;
 }
 
 a {
   font-weight: 500;
-  color: #ff37a2;
+  color: black;
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #ff37a2;
+  color: black;
 }
 
 body {
@@ -104,7 +108,7 @@ h1 {
   display: flex;
   justify-content: center;
   border: 2px solid pink;
-  background: linear-gradient(to right, #ef2a6200, #fd3b7cb9);
+  background-color: whitesmoke;
   color: beige;
 }
 
@@ -115,20 +119,25 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background: linear-gradient(to right bottom,
-      rgba(255, 255, 255, 0.2),
-      rgba(255, 255, 255, 0.2));
+  background-color: var(--lava);
   cursor: pointer;
   transition: border-color 0.25s;
 }
 
 button:hover {
-  border-color: #ba3f8bb9;
+  border-color: var(--papaya);
 }
 
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.total-time {
+  display: flex;
+  gap: 200px;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (prefers-color-scheme: light) {
@@ -138,7 +147,7 @@ button:focus-visible {
   }
 
   a:hover {
-    color: #ff37a2;
+    color: black;
   }
 
   button {

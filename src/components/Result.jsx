@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSubjectName } from "../hooks/useSubjectName";
 import Buttons from "./layout/Buttons";
 import { useTimer } from "../hooks/useTimer";
-
+ 
 function Result() {
     const { subjectId } = useParams();
     const dialogRef = useRef(null);

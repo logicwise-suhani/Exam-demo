@@ -10,7 +10,7 @@ function CreateSubject() {
     const [error, setError] = useState("");
     const listSubject = useSelector((s) => s.subjects.subjects);
     const dispatch = useDispatch();
- 
+
     useEffect(() => {
         const handlePopState = () => {
             window.history.go(1);
@@ -35,7 +35,7 @@ function CreateSubject() {
             id: index + 1
         }))
     }
- 
+
     const showAndAddSubject = () => {
         if (!show) {
             setShow(true);
@@ -117,7 +117,7 @@ function CreateSubject() {
     return (
         <>
             <nav className="navbar">
-                <button onClick={handleLogOut} style={{ color: "red" }}>LogOut</button>
+                <button onClick={handleLogOut}>LogOut</button>
             </nav>
 
             <div className="heading">
@@ -160,13 +160,13 @@ function CreateSubject() {
                                                     return;
                                                 }
                                                 navigate(`/create-exam/${id}`);
-                                            }} className={examExists ? "disabled" : "enabled"}>
-                                                Create Exam
+                                            }} className={examExists ? "disabled" : "enabled"} style={{ fontSize: "20px" }}>
+                                                +
                                             </td>
+                                            <td onClick={() => handleData(id)} style={{ cursor: "pointer", color: localStorage.getItem(`exam_${id}`) ? "var(--steel-blue)" : "red" }}> 👁</td>
                                             <td onClick={() => handleDelete(id)} style={{ cursor: "pointer", color: "red" }}>
-                                                Delete Exam
+                                                ❌
                                             </td>
-                                            <td onClick={() => handleData(id)} style={{ cursor: "pointer", color: localStorage.getItem(`exam_${id}`) ? "yellowgreen" : "red" }}>Preview Data</td>
                                         </tr>
                                     )
                                 }) : null

@@ -158,7 +158,7 @@ function ShowQuestions() {
             </nav>
 
             {questions.length === 0 && (
-                <h3 style={{ color: "yellow" }}>
+                <h3 style={{ color: "var(--papaya" }}>
                     {savedData.length === 0 ? "Questionnaire is empty!" : "Click Start to give Exam"}
                 </h3>
             )}
@@ -178,7 +178,7 @@ function ShowQuestions() {
                     />
                     {error && <div style={{ color: "red" }}>{error}</div>}
                 </div>
-            )} <br />
+            )}<br />
 
             <div className="show-next">
                 {questions.length > 0 && <button onClick={handleNext} disabled={currentIndex === questions.length - 1}>Next</button>}

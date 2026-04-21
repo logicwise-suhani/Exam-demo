@@ -63,19 +63,16 @@ function SelectSubject() {
             <nav className="navbar">
                 <button onClick={() => navigate("/result")} style={{ cursor: "pointer" }}>Result</button>
                 <p>Logged as: {userName}</p>
-
-                <div className="red-btn">
-                    <Buttons onClick={handleLogOut} label="LogOut" />
-                </div>
+                <Buttons onClick={handleLogOut} button="LogOut" />
             </nav>
 
             {subject.length > 0 ?
                 <>
-                    <h3>Available Exams</h3>
+                    <h1>Available Exams</h1>
                     <div className="select-subject">
                         {subject.map((item) => (
                             <div key={item.id}>
-                                <label onClick={() => handleClick(item.id)}> {item.subject}</label>
+                                <button onClick={() => handleClick(item.id)}> {item.subject}</button>
                             </div>
                         ))}
                     </div>
@@ -87,7 +84,7 @@ function SelectSubject() {
                 </>
             }
         </>
-    ) 
+    )
 }
 
 export default SelectSubject;

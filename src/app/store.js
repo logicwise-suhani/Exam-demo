@@ -7,4 +7,5 @@ export const store = configureStore({
         subjects: subjectReducer,
         exam: examReducer
     }
-}); 
+});
+

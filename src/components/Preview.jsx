@@ -3,14 +3,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { formatTime } from "../utils/timeFormatter";
 import { useSubjectName } from "../hooks/useSubjectName";
 import Buttons from "./layout/Buttons";
- 
+
 function Preview() {
     const { subjectId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const subName = useSubjectName();
     const [previewData, setPreviewData] = useState([]);
- 
+
     useEffect(() => {
         const storedData = localStorage.getItem(`exam_${subjectId}`);
         setPreviewData(storedData ? JSON.parse(storedData) : "");
@@ -48,10 +48,12 @@ function Preview() {
     return (
         <>
             <div className="preview-container">
-                <h2>Preview</h2>
-                <h3 style={{ color: "white" }}>{subName}</h3>
+                <h1>Preview</h1>
 
-                {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)}</h3>}
+                <div className="total-time">
+                    <h3 style={{ color: "var(--papaya" }}>{subName}</h3>
+                    {previewData.length === 0 ? <h3>No exam to Preview</h3> : <h3>Total Time  {formatTime(totalTime)}</h3>}
+                </div>
 
                 <div className={previewData.length === 0 ? "" : "preview"}>
                     {previewData ? previewData.map((item, index) => (

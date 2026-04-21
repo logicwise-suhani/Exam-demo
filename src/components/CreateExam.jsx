@@ -209,7 +209,7 @@ function CreateExam() {
                     <h2>SUBJECT: {subName}</h2>
                 </div>
             </nav>
-
+ 
             <br />
             <div className='create-exam'>
                 <label>Ques no: {currentIndex + 1}</label>
