@@ -158,7 +158,7 @@ function ShowQuestions() {
             </nav>
 
             {questions.length === 0 && (
-                <h3 style={{ color: "var(--papaya" }}>
+                <h3 style={{ color: "var(--papaya)" }}>
                     {savedData.length === 0 ? "Questionnaire is empty!" : "Click Start to give Exam"}
                 </h3>
             )}
