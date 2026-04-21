@@ -121,9 +121,9 @@ function CreateSubject() {
             </nav>
 
             <div className="heading">
-                <h2>Welcome, Teacher!</h2>
+                <h1>Welcome, Teacher!</h1>
             </div>
-
+            <br />
             <div className="create-subject">
                 {show && (
                     <input

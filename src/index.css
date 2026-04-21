@@ -42,8 +42,6 @@
   cursor: pointer;
 }
 
-.drop-down button {}
-
 .heading {
   display: flex;
   flex-direction: column;
