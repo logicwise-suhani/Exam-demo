@@ -57,7 +57,7 @@ function SelectSubject() {
             navigate("/login");
         }
     }
-
+ 
     return (
         <>
             <nav className="navbar">

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSubjectName } from "../hooks/useSubjectName";
 import Buttons from "./layout/Buttons";
 import { useTimer } from "../hooks/useTimer";
- 
+
 function Result() {
     const { subjectId } = useParams();
     const dialogRef = useRef(null);
@@ -93,7 +93,19 @@ function Result() {
 
     const subjects = useMemo(() => {
         try {
-            return JSON.parse(localStorage.getItem("subjects")) || [];
+            const parsedSubjects = JSON.parse(localStorage.getItem("subjects")) || [];
+
+            return parsedSubjects.filter((subject) => {
+                const examData = localStorage.getItem(`exam_${subject.id}`);
+                if (!examData) return false;
+
+                try {
+                    const parsedExam = JSON.parse(examData);
+                    return Array.isArray(parsedExam) && parsedExam.length > 0;
+                } catch {
+                    return false;
+                }
+            });
         } catch {
             return [];
         }
