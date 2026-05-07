@@ -11,17 +11,17 @@ function Home() {
     } else {
       navigate("/login");
     }
-  } 
-   
+  }
+
 
   return (
     <>
       <div className="heading">
-        <h1>Welcome to Exam Demo!</h1>
+        <h1>Welcome to Exam!</h1>
         <div className="select-role">
           <h2>Select your Role</h2>
           <button onClick={() => navigate("/teacher-login")} >Create Quiz </button>
-          
+
           <br /> <br />
           <button onClick={handleStudentClick}>Student: Give a Quiz</button>
         </div>
